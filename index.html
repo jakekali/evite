@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HTML 5 Boilerplate</title>
+  </head>
+  <body  style="background-color: grey">
+
+        <div id="all" style="background-color: aqua;">
+
+
+        <div class="env_div" style="position: fixed; top:50%; left:20%; z-index: 13; filter: drop-shadow(0px 5px 5px #000000); ">
+            <canvas id="flap_closed", style="border:1px solid #FF0000;">
+                <!-- white flap going up -->
+            </canvas> 
+        </div>
+
+        <div class="env_div" style="position: fixed; top:0%; left:20%; z-index: 6;">
+            <canvas id="flap_open", style="border:1px solid #FF00FF; filter: drop-shadow(0px 5px 5px #000000); ">
+                <!-- blue flap going up -->
+            </canvas> 
+        </div>
+
+        <div id="card_div", style="position: fixed; top:25%; left:25%;  z-index: 10;">
+            <canvas id="card", style="border:1px solid #246720; filter: drop-shadow(0px 5px 5px #000000);">
+            </canvas> 
+        </div>
+
+        <div class="env_div" style="position: fixed; top:50%; left:20%; z-index: 3; ">
+            <canvas id="env_blue", style="border:1px solid #FFFF00;">
+                 <!--whole bottom -->
+            </canvas> 
+        </div>
+
+        <div class="env_div" style="position: fixed; top:50%; left:20%; z-index: 12;">
+            <canvas id="env_white", style="border:1px solid rgb(11, 77, 63); filter: drop-shadow(0px 5px 5px #000000);">
+            </canvas> 
+        </div>
+
+       
+        </div>
+	
+    
+    <script>
+        (function() {
+
+        const canvas_blue = document.getElementById('env_blue');
+        const context_blue = canvas_blue.getContext('2d');
+
+        const canvas_white = document.getElementById('env_white');
+        const context_white = canvas_white.getContext('2d');
+
+        const canvas_flap_closed = document.getElementById('flap_closed');
+        const context_flap_closed = canvas_flap_closed.getContext('2d');
+
+        const canvas_flap_open = document.getElementById('flap_open');
+        const context_flap_open = canvas_flap_open.getContext('2d');
+
+        const canvas_card = document.getElementById('card');
+        const context_card = canvas_card.getContext('2d');
+
+        // set the canvas size to the window size if the window size is smaller than the envelope size
+        if (window.innerWidth < 750) {
+            envelope_width = window.innerWidth;
+            envelope_height = window.innerWidth * 0.75;
+        } else {
+            envelope_width = 750;
+            envelope_height = 500;
+        }
+
+        // center the envelope on the screen
+        envelope_left = (window.innerWidth - envelope_width) / 2;
+        envelope_top = (window.innerHeight - envelope_height) / 2;
+
+        // set the envelope size and position
+        canvas_blue.style.left = envelope_left + "px";
+        canvas_blue.style.top = envelope_top + "px";
+
+        
+
+
+
+                
+        function resizeCanvas() {
+            window.PictureInPictureEvent
+
+            // Color Background Image
+            canvas_blue.width =  envelope_width
+            canvas_blue.height = envelope_height;
+
+            // Front of Envelope
+            canvas_white.width = envelope_width
+            canvas_white.height = envelope_height;
+
+            // Top of Envelope Outside
+            canvas_flap_closed.width =  envelope_width
+            canvas_flap_closed.height = envelope_height;
+           
+            // Top of Envelope Inside
+            canvas_flap_open.width =  envelope_width
+            canvas_flap_open.height = envelope_height;
+
+            canvas_card.width = envelope_height
+            canvas_card.height = envelope_width
+
+                        
+            /**
+             * Your drawings need to be inside this function otherwise they will be reset when 
+             * you resize the browser window and the canvas goes will be cleared.
+             */
+             canvas_flap_open.style.transform = "rotateX(90deg)";
+
+             canvas_flap_closed.style.transform = "rotateX(0deg)";
+             canvas_flap_closed.style.transition = "transform 0.5s cubic-bezier(.41,.94,.56,1.01) 0.5s";
+
+
+            drawStuff(); 
+        }
+        
+        resizeCanvas();
+                
+        function drawStuff() {
+            
+            // Color Background Image
+            var white = new Image();
+            white.src = 'outside.png';
+            white.onload = function() {
+                context_white.drawImage(white, 0, 0, canvas_white.width, canvas_white.height);}
+
+            // Front of Envelope
+            var blue = new Image();
+            blue.src = 'inside.png';
+            blue.onload = function() {
+                context_blue.drawImage(blue, 0, 0, canvas_blue.width, canvas_blue.height);}
+
+            // Top of Envelope Outside
+            var flap_closed = new Image();
+            flap_closed.src = 'top_closed.png';
+            flap_closed.onload = function() {
+                context_flap_closed.drawImage(flap_closed, 0, 0, canvas_flap_closed.width, canvas_flap_closed.height);}
+
+
+            // Top of Envelope Inside
+            var flap_open = new Image();
+            flap_open.src = 'top.png';
+            flap_open.onload = function() {
+                context_flap_open.drawImage(flap_open, 0, 0, canvas_flap_open.width, canvas_flap_open.height);}
+
+                canvas_flap_open.style.transform = "rotateX(90deg)";
+
+
+            var card = new Image();
+            card.src = 'card.png';
+            card.onload = function() {
+                context_card.drawImage(card, 0, 0, canvas_card.width, canvas_card.height);}
+
+                card_div = document.getElementById('card_div')
+                card_div.style.top = "75%";
+
+
+
+        }
+            
+        // onclick the top half will open, by rotating the top half
+        alls = document.getElementById('all');
+        alls.addEventListener('click', function() {
+            // rotate in the x-axis the whole canvas element, animated over 5 seconds
+
+            canvas_flap_closed.style.transformOrigin = "top";
+            canvas_flap_closed.style.transform = "rotateX(90deg)";
+            canvas_flap_closed.style.transition = "transform 0.5s cubic-bezier(.82,.46,.85,.46)";
+
+            canvas_flap_open.style.transformOrigin = "bottom";
+            canvas_flap_open.style.transform = "rotateX(0deg)";
+            canvas_flap_open.style.transition = "transform 0.5s cubic-bezier(.41,.94,.56,1.01) 0.5s";
+
+            card_div.style.top = "10%";
+            card_div.style.transition = "top 0.5s cubic-bezier(.41,.94,.56,1.01) 0.5s";
+            
+        }, false);
+
+        })();
+
+
+    </script> 
+  </body>
+</html>
+
+
+
+
+
