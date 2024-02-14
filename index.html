@@ -8,7 +8,9 @@
   </head>
   <body  style="background-color: grey">
 
-        <div id="all" style="background-color: aqua;">
+        <div id="all">
+
+            
 
             <canvas id="flap_open" style="z-index: inherit;">
                 <!-- blue flap going up -->
@@ -52,6 +54,8 @@
         const canvas_card = document.getElementById('card');
         const context_card = canvas_card.getContext('2d');
 
+        canvas_card.visibility = "hidden";
+
         // set the canvas size to the window size if the window size is smaller than the envelope size
         if (window.innerWidth < 750) {
             envelope_width = window.innerWidth;
@@ -85,17 +89,27 @@
         canvas_flap_open.style.visibility = "hidden";
         canvas_card.style.zIndex = "5";
 
-
-        setCardSize(envelope_width, envelope_height , 0.5, 0, 0)
+        setCardSize(envelope_height * 0.9, envelope_width * 0.9, 0.5, 90, 0.5, 0, true)
 
         drawStuff(); 
 
-        function setCardSize(width, height, position_y, transitionTime, delayTime){
-            canvas_card.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
+        function setCardSize(width, height, position_y, rotationY, transitionTime, delayTime, firstTime=false){
+            if (firstTime){
+                canvas_card.width = 8 * height;
+                canvas_card.height = 8 * width;
+            }
+
+            canvas_card.style.transition = "width " + transitionTime + "s height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s, rotate " + transitionTime + "s";
+            var trans_string = ""
+            var transitions = ["width", "height", "left", "top", "rotate", "transform"];
+            transitions.forEach(element => {
+                trans_string += element + " " + transitionTime + "s, ";
+            });
             canvas_card.style.width =  width + "px";
             canvas_card.style.height = height + "px";
             canvas_card.style.left = ((window.innerWidth - width) / 2) + "px";
             canvas_card.style.top = ((window.innerHeight * position_y) - height / 2) + "px"; 
+            canvas_card.style.transform = "rotateZ(" + rotationY + "deg)";
         }
 
 
@@ -103,11 +117,24 @@
             // width and height are the new width and height of the envelope
             // top is the new top position of the envelope
 
+            if (firstTime){
+                var scale = 4;
+                canvas_flap_open.width = scale*750;
+                canvas_flap_open.height = scale*500;
+
+                canvas_flap_closed.width = scale*750;
+                canvas_flap_closed.height = scale*500;
+
+                canvas_white.width = scale*750;
+                canvas_white.height = scale*500;
+                
+                canvas_blue.width = scale*750;
+                canvas_blue.height = scale*500;
+            }
             canvas_blue.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
             canvas_white.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
             canvas_flap_closed.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s,   left " + transitionTime + "s, top " + transitionTime + "s";
             canvas_flap_open.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
-            canvas_card.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
 
             canvas_blue.style.width =  width + "px";
             canvas_blue.style.height = height + "px";
@@ -142,13 +169,13 @@
             
             // Color Background Image
             var white = new Image();
-            white.src = 'outside.png';
+            white.src = 'src/images/outside.png';
             white.onload = function() {
                 context_white.drawImage(white, 0, 0, canvas_white.width, canvas_white.height);}
 
             // Front of Envelope
             var blue = new Image();
-            blue.src = 'inside.png';
+            blue.src = 'src/images/inside.png';
             blue.onload = function() {
                 context_blue.drawImage(blue, 0, 0, canvas_blue.width, canvas_blue.height);}
 
@@ -161,44 +188,95 @@
 
             // Top of Envelope Inside
             var flap_open = new Image();
-            flap_open.src = 'top.png';
+            flap_open.src = 'src/images/top.png';
             flap_open.onload = function() {
                 context_flap_open.drawImage(flap_open, 0, 0, canvas_flap_open.width, canvas_flap_open.height);}
 
-                // canvas_flap_open.style.transform = "rotateX(90deg)";
-
-
             var card = new Image();
-            card.src = 'card.png';
+            card.src = 'src/images/card.png';
             card.onload = function() {
                 context_card.drawImage(card, 0, 0, canvas_card.width, canvas_card.height);}
 
+
+        }
+
+        function openFlap(){
+            
+            canvas_flap_closed.style.transformOrigin = "top";
+            top_keyframes = canvas_flap_closed.animate([
+                {transform: 'rotateX(0deg)'},
+                {transform: 'rotateX(90deg)'},
+                {transform: 'rotateX(90deg)'},
+                {transform: 'rotateX(90deg) translateY(42px)'},
+                {transform: 'rotateX(90deg) translateY(42px)'},
+
+            ], {
+                duration: 3000,
+
+                fill: 'forwards'
+            });
+
+            canvas_flap_open.style.transformOrigin = "bottom";
+            canvas_flap_open.style.visibility = "visible";
+
+            drop_px = envelope_width * 0.9;
+            bottom_keyframes = canvas_flap_open.animate([
+                {transform: 'rotateX(90deg)'},
+                {transform: 'rotateX(90deg)'},
+                {transform: 'rotateX(0deg)'},
+                {transform: `rotateX(0deg) translateY(${drop_px}px)`},
+                {transform: `rotateX(0deg) translateY(${drop_px}px)`},
+
+
+            ], {
+                duration: 3000,
+                fill: 'forwards'
+            });
+
+            canvas_white.animate([
+                {transform: 'rotateX(0deg)'},
+                {transform: 'rotateX(0deg)'},
+                {transform: 'rotateX(0deg)'},
+                {transform: `translateY(${drop_px}px)`},
+                {transform: `translateY(${drop_px}px)`},
+
+            ], {
+                duration: 3000,
+                fill: 'forwards'
+            });
+
+
+            canvas_blue.animate([
+                {transform: 'rotateX(0deg)'},
+                {transform: 'rotateX(0deg)'},
+                {transform: 'rotateX(0deg)'},
+                {transform: `translateY(${drop_px}px)`},
+                {transform: `translateY(${drop_px}px)`},
+
+            ], {
+                duration: 3000,
+                fill: 'forwards'
+            });
+
+            canvas_card.animate([
+                {transform: 'rotateZ(-90deg)'},
+                {transform: 'rotateZ(-90deg)'},
+                {transform: 'rotateZ(-90deg)'},
+                {transform: 'rotateZ(-90deg)'},
+                {transform: `rotateZ(0deg) translateY(-3.2rem) scaleX(1.08) scaleY(1.08)`},
+            ], {
+                duration: 3000,
+                fill: 'forwards'
+            });
 
         }
             
         // onclick the top half will open, by rotating the top half
         alls = document.getElementById('all');
         alls.addEventListener('click', function() {
-            // rotate in the x-axis the whole canvas element, animated over 5 seconds
 
-            canvas_flap_closed.style.transformOrigin = "top";
-            canvas_flap_closed.style.transform = "rotateX(90deg)";
-            canvas_flap_closed.style.transition = "transform 0.5s cubic-bezier(.82,.46,.85,.46)";
+            openFlap();
 
-            // the canvas_flap_open should rotate from the bottom, and as it does the envelope should get smaller and move down
-            canvas_flap_open.style.transformOrigin = "top";
-            canvas_flap_open.style.transform = "rotateX(90deg)";
-            canvas_flap_open.style.transition = "transform 0.0s cubic-bezier(.82,.46,.85,.46)";
-
-            canvas_flap_open.style.visibility = "visible";
-            canvas_flap_open.style.transform = "rotateY(90deg)";
-
-
-            canvas_flap_open.style.transform = "rotateX(0deg)";
-            canvas_flap_open.style.transition = "transform 0.5s cubic-bezier(.82,.46,.85,.46)";
-
-            setEnvelopeSize(envelope_width * 0.80, envelope_height * 0.80, 0.60, 0.5, 0.5);
-            
         }, false);
         })();
 
