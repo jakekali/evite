@@ -10,34 +10,23 @@
 
         <div id="all" style="background-color: aqua;">
 
-
-        <div class="env_div" style="position: fixed; top:50%; left:20%; z-index: 13; filter: drop-shadow(0px 5px 5px #000000); ">
-            <canvas id="flap_closed", style="border:1px solid #FF0000;">
-                <!-- white flap going up -->
-            </canvas> 
-        </div>
-
-        <div class="env_div" style="position: fixed; top:0%; left:20%; z-index: 6;">
-            <canvas id="flap_open", style="border:1px solid #FF00FF; filter: drop-shadow(0px 5px 5px #000000); ">
+            <canvas id="flap_open" style="z-index: inherit;">
                 <!-- blue flap going up -->
             </canvas> 
-        </div>
 
-        <div id="card_div", style="position: fixed; top:25%; left:25%;  z-index: 10;">
-            <canvas id="card", style="border:1px solid #246720; filter: drop-shadow(0px 5px 5px #000000);">
+            <canvas id="card", style="border:1px solid #246720; filter: drop-shadow(0px 5px 5px #000000); z-index: inherit;">
             </canvas> 
-        </div>
 
-        <div class="env_div" style="position: fixed; top:50%; left:20%; z-index: 3; ">
-            <canvas id="env_blue", style="border:1px solid #FFFF00;">
+            <canvas id="env_blue", style="border:1px solid #FFFF00; z-index: inherit;">
                  <!--whole bottom -->
             </canvas> 
-        </div>
 
-        <div class="env_div" style="position: fixed; top:50%; left:20%; z-index: 12;">
-            <canvas id="env_white", style="border:1px solid rgb(11, 77, 63); filter: drop-shadow(0px 5px 5px #000000);">
+            <canvas id="env_white", style="border:1px solid rgb(11, 77, 63); filter: drop-shadow(0px 5px 5px #000000); z-index: inherit;">
             </canvas> 
-        </div>
+
+            <canvas id="flap_closed">
+                <!-- white flap going up -->
+            </canvas> 
 
        
         </div>
@@ -45,6 +34,8 @@
     
     <script>
         (function() {
+
+        var firstTime = true;
 
         const canvas_blue = document.getElementById('env_blue');
         const context_blue = canvas_blue.getContext('2d');
@@ -74,52 +65,78 @@
         envelope_left = (window.innerWidth - envelope_width) / 2;
         envelope_top = (window.innerHeight - envelope_height) / 2;
 
-        // set the envelope size and position
-        canvas_blue.style.left = envelope_left + "px";
-        canvas_blue.style.top = envelope_top + "px";
-
-        
 
 
+        // set the closed envelope size and position
+        //set the position of the canvas to fixed
+        canvas_flap_open.style.position = "fixed";
+        canvas_flap_closed.style.position = "fixed";
+        canvas_white.style.position = "fixed";
+        canvas_blue.style.position = "fixed";
+        canvas_card.style.position = "fixed";
 
-                
-        function resizeCanvas() {
-            window.PictureInPictureEvent
+        setEnvelopeSize(envelope_width, envelope_height, 0.5, 0, 0, true)
 
-            // Color Background Image
-            canvas_blue.width =  envelope_width
-            canvas_blue.height = envelope_height;
-
-            // Front of Envelope
-            canvas_white.width = envelope_width
-            canvas_white.height = envelope_height;
-
-            // Top of Envelope Outside
-            canvas_flap_closed.width =  envelope_width
-            canvas_flap_closed.height = envelope_height;
-           
-            // Top of Envelope Inside
-            canvas_flap_open.width =  envelope_width
-            canvas_flap_open.height = envelope_height;
-
-            canvas_card.width = envelope_height
-            canvas_card.height = envelope_width
-
-                        
-            /**
-             * Your drawings need to be inside this function otherwise they will be reset when 
-             * you resize the browser window and the canvas goes will be cleared.
-             */
-             canvas_flap_open.style.transform = "rotateX(90deg)";
-
-             canvas_flap_closed.style.transform = "rotateX(0deg)";
-             canvas_flap_closed.style.transition = "transform 0.5s cubic-bezier(.41,.94,.56,1.01) 0.5s";
+        // set the z-index of the canvas elements so that the top flap is on top using the parent div ids
+        canvas_flap_closed.style.zIndex = "10";
+        canvas_white.style.zIndex = "7";
+        canvas_blue.style.zIndex = "2";
+        canvas_flap_open.style.zIndex = "3";
+        canvas_flap_open.style.visibility = "hidden";
+        canvas_card.style.zIndex = "5";
 
 
-            drawStuff(); 
+        setCardSize(envelope_width, envelope_height , 0.5, 0, 0)
+
+        drawStuff(); 
+
+        function setCardSize(width, height, position_y, transitionTime, delayTime){
+            canvas_card.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
+            canvas_card.style.width =  width + "px";
+            canvas_card.style.height = height + "px";
+            canvas_card.style.left = ((window.innerWidth - width) / 2) + "px";
+            canvas_card.style.top = ((window.innerHeight * position_y) - height / 2) + "px"; 
         }
-        
-        resizeCanvas();
+
+
+        function setEnvelopeSize(width, height, position_y, transitionTime, delayTime, firstTime=false) {
+            // width and height are the new width and height of the envelope
+            // top is the new top position of the envelope
+
+            canvas_blue.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
+            canvas_white.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
+            canvas_flap_closed.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s,   left " + transitionTime + "s, top " + transitionTime + "s";
+            canvas_flap_open.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
+            canvas_card.style.transition = "width " + transitionTime + "s, height " + transitionTime + "s, left " + transitionTime + "s, top " + transitionTime + "s";
+
+            canvas_blue.style.width =  width + "px";
+            canvas_blue.style.height = height + "px";
+
+            canvas_white.style.width = width + "px";   
+            canvas_white.style.height = height + "px";
+            
+            canvas_flap_closed.style.width =  width + "px";
+            canvas_flap_closed.style.height = height + "px";
+
+            canvas_flap_open.style.width =  width + "px";
+            canvas_flap_open.style.height = height  + "px";
+
+            // move the envelope to the center of the screen
+            canvas_blue.style.left = ((window.innerWidth - width) / 2) + "px";
+            canvas_blue.style.top = ((window.innerHeight * position_y)- height / 2) + "px"; 
+
+            canvas_white.style.left = ((window.innerWidth - width) / 2) + "px";
+            canvas_white.style.top = ((window.innerHeight * position_y) - height / 2) + "px"; 
+
+            canvas_flap_closed.style.left = ((window.innerWidth - width) / 2) + "px";
+            canvas_flap_closed.style.top = ((window.innerHeight * position_y) - height / 2) + "px"; 
+
+            canvas_flap_open.style.left = ((window.innerWidth - width) / 2) + "px";
+            canvas_flap_open.style.top = ((window.innerHeight * position_y) - 1.5 * height)  + "px"; 
+
+
+        }
+  
                 
         function drawStuff() {
             
@@ -148,17 +165,13 @@
             flap_open.onload = function() {
                 context_flap_open.drawImage(flap_open, 0, 0, canvas_flap_open.width, canvas_flap_open.height);}
 
-                canvas_flap_open.style.transform = "rotateX(90deg)";
+                // canvas_flap_open.style.transform = "rotateX(90deg)";
 
 
             var card = new Image();
             card.src = 'card.png';
             card.onload = function() {
                 context_card.drawImage(card, 0, 0, canvas_card.width, canvas_card.height);}
-
-                card_div = document.getElementById('card_div')
-                card_div.style.top = "75%";
-
 
 
         }
@@ -172,15 +185,21 @@
             canvas_flap_closed.style.transform = "rotateX(90deg)";
             canvas_flap_closed.style.transition = "transform 0.5s cubic-bezier(.82,.46,.85,.46)";
 
-            canvas_flap_open.style.transformOrigin = "bottom";
-            canvas_flap_open.style.transform = "rotateX(0deg)";
-            canvas_flap_open.style.transition = "transform 0.5s cubic-bezier(.41,.94,.56,1.01) 0.5s";
+            // the canvas_flap_open should rotate from the bottom, and as it does the envelope should get smaller and move down
+            canvas_flap_open.style.transformOrigin = "top";
+            canvas_flap_open.style.transform = "rotateX(90deg)";
+            canvas_flap_open.style.transition = "transform 0.0s cubic-bezier(.82,.46,.85,.46)";
 
-            card_div.style.top = "10%";
-            card_div.style.transition = "top 0.5s cubic-bezier(.41,.94,.56,1.01) 0.5s";
+            canvas_flap_open.style.visibility = "visible";
+            canvas_flap_open.style.transform = "rotateY(90deg)";
+
+
+            canvas_flap_open.style.transform = "rotateX(0deg)";
+            canvas_flap_open.style.transition = "transform 0.5s cubic-bezier(.82,.46,.85,.46)";
+
+            setEnvelopeSize(envelope_width * 0.80, envelope_height * 0.80, 0.60, 0.5, 0.5);
             
         }, false);
-
         })();
 
 
