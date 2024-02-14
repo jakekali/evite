@@ -169,31 +169,31 @@
             
             // Color Background Image
             var white = new Image();
-            white.src = 'src/images/outside.png';
+            white.src = 'images/outside.png';
             white.onload = function() {
                 context_white.drawImage(white, 0, 0, canvas_white.width, canvas_white.height);}
 
             // Front of Envelope
             var blue = new Image();
-            blue.src = 'src/images/inside.png';
+            blue.src = 'images/inside.png';
             blue.onload = function() {
                 context_blue.drawImage(blue, 0, 0, canvas_blue.width, canvas_blue.height);}
 
             // Top of Envelope Outside
             var flap_closed = new Image();
-            flap_closed.src = 'top_closed.png';
+            flap_closed.src = 'images/top_closed.png';
             flap_closed.onload = function() {
                 context_flap_closed.drawImage(flap_closed, 0, 0, canvas_flap_closed.width, canvas_flap_closed.height);}
 
 
             // Top of Envelope Inside
             var flap_open = new Image();
-            flap_open.src = 'src/images/top.png';
+            flap_open.src = 'images/top.png';
             flap_open.onload = function() {
                 context_flap_open.drawImage(flap_open, 0, 0, canvas_flap_open.width, canvas_flap_open.height);}
 
             var card = new Image();
-            card.src = 'src/images/card.png';
+            card.src = 'images/card.png';
             card.onload = function() {
                 context_card.drawImage(card, 0, 0, canvas_card.width, canvas_card.height);}
 
