@@ -13,6 +13,9 @@ class Guest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     sent_at = models.DateTimeField(null=True, blank=True)
+    hash = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return f'{self.event} | {self.name}'
+    
+    

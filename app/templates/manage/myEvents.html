@@ -1,0 +1,26 @@
+{% extends "base/head.html" %}
+
+{% block title %} My Events {% endblock %}
+
+{% block content %}
+<h1>My Events</h1>
+<div class="align-content-sm-start d-flex flex-wrap justify-content-center">
+    {% for key, value in events.items  %}
+    <div class="d-md-inline-flex w-25 m-2">
+        <div class="card">
+            <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+            <img src="https://mdbcdn.b-cdn.net/img/new/standard/nature/111.webp" class="img-fluid"/>
+            <a href="#!">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+            </a>
+            </div>
+            <div class="card-body">
+            <h5 class="card-title">{{ key }} , {{value}}</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#!" class="btn btn-primary" data-mdb-ripple-init>Button</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
