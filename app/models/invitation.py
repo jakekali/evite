@@ -7,7 +7,3 @@ class Invitation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to="invitations")
-
-    def __str__(self):
-        return f'Invitation for {self.event}'
-    
