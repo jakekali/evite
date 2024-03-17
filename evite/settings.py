@@ -28,18 +28,49 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_ID = 2
 
 # Application definition
 
 INSTALLED_APPS = [
-    "app.apps.AppConfig",
+    # "app.apps.AppConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "app",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google"
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'APP': {
+            "client_id":"729396136925-r5tsv7oemggj1trt0u8d0ehj5fjbn4sd.apps.googleusercontent.com",
+            "project_id":"evite-django",
+            "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+            "token_uri":"https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+            "client_secret":"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",
+            'key' : '',
+            "secret":"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",
+        }
+    }
+}
+
+# AUTH_USER_MODEL = "app.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -49,6 +80,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "evite.urls"
@@ -127,3 +160,12 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+) 
+
+LOGIN_DIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
