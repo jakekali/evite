@@ -1,7 +1,11 @@
 from django.db import models
 from django.conf import settings
 from .events import Event
+from django.core.mail import send_mail
 
+def _createHash():
+    return hexlify(os.urandom(5))
+    
 class Guest(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50, null=True)
@@ -11,4 +15,14 @@ class Guest(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True)
     rsvp = models.BooleanField(null=True, default=None)
     history = models.JSONField(null=True)
-    hash = models.CharField(max_length=200, null=True, blank=True)
+    hash = models.CharField(max_length=10,default=_createHash,unique=True)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['event', 'email'], name='unique_gueset'
+            )
+        ]
+    def sendMassEmail(self, event, subject, message, from_email):
+        message = (
+            subject, message, from_email, []
+        )
