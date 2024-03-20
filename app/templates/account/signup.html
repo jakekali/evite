@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 
 {% block content %}
-  <h2>Sign up</h2>
+  <h2>Login</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Sign up</button>
+    <button type="submit">Login</button>
   </form>
   <p>Or</p>
-  <a href="{% provider_login_url 'google' %}">Sign up with Google</a>
+  <a href="/accounts/google/login/">Sign in with Google</a>
 {% endblock %}
