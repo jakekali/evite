@@ -1,0 +1,12 @@
+{% extends "../base/base.html" %}
+
+{% block content %}
+  <h2>Login</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+  </form>
+  <p>Or</p>
+  <a href="/accounts/google/login/">Sign in with Google</a>
+{% endblock %}

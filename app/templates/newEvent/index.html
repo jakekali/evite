@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+
+{% block title %} NEW EVENT{% endblock %}
+
+{% block content %}
+<div class="home-main">
+{% include "newEvent/uploadCard.html" %}
+{% include "newEvent/eventDetails.html" %}
+{% include "newEvent/background_selection.html"%}
+<!-- {% include "inviteView/animation.html" %} -->
+
+</div>
+
+{% endblock %}

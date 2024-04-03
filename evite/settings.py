@@ -33,44 +33,39 @@ SITE_ID = 2
 # Application definition
 
 INSTALLED_APPS = [
-    # "app.apps.AppConfig",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "app.apps.AppConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
-    "app",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google"
+    "django_htmx",
 ]
+
+STATIC_URL = "static/"
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'APP': {
+            'client_id': '341273566592-kpd1ru6hoda7uikpcdpuf4gmeeht80nj.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        },
         'SCOPE': [
             'profile',
             'email',
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-        },
-        'APP': {
-            "client_id":"729396136925-r5tsv7oemggj1trt0u8d0ehj5fjbn4sd.apps.googleusercontent.com",
-            "project_id":"evite-django",
-            "auth_uri":"https://accounts.google.com/o/oauth2/auth",
-            "token_uri":"https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-            "client_secret":"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",
-            'key' : '',
-            "secret":"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",
         }
     }
 }
-
-# AUTH_USER_MODEL = "app.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -80,8 +75,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    
     "allauth.account.middleware.AccountMiddleware",
+    "django_htmx.middleware.HtmxMiddleware"
 ]
 
 ROOT_URLCONF = "evite.urls"
@@ -162,10 +157,13 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
-) 
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
-LOGIN_DIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+LOGIN_REDIRECT_URL = '/'
 
