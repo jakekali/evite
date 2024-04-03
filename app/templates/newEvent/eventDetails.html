@@ -1,0 +1,62 @@
+<div class="home-trending-items section-container">
+    <div class="home-container03" id='event_details_form_container'>
+      <img
+        alt="image"
+        src="https://play.teleporthq.io/static/svg/default-img.svg"
+        class="home-image2"
+        id="card_image_details"
+      />
+      <div class="home-container04">
+        <form id='form' hx-encoding='multipart/form-data' hx-post='/createEvent/' >
+            <span class="home-text11">Event Details</span>
+            <div class="home-container05">
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Event Name"
+                    class="home-textinput input"
+                    name='event_name'
+                />
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Host Name"
+                    class="home-textinput1 input"
+                    name='host_name'
+                />
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Date &amp; Time"
+                    class="home-textinput2 input"
+                    name='date_time'
+                />
+                <textarea
+                    placeholder="Description"
+                    class="home-textarea textarea"
+                    name='description'
+                ></textarea>
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Location"
+                    class="home-textinput3 input"
+                    name='location'
+                />
+                
+                <input id="fileInput" type='file' name='file'>
+                <button class="home-button button">
+                    Button
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    fileInput.onchange = inputFileHandler;
+
+
+</script>
