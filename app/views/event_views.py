@@ -89,10 +89,12 @@ def createEvent(request):
         event_id = event.pk
 
         print(event_id)
+        print(files['file'])
 
         # TODO: create inviation here with card
         invitation = Invitation.objects.create(
-                event=event
+                event=event,
+                card=files['file']
             )
 
         out = render(request, 'newEvent/background_selection.html', {'loggedIn':  request.user.is_authenticated,
@@ -104,22 +106,26 @@ def createEvent(request):
 
     else:
         # TODO add background images via database instead of this import
+        ## check up ^
         return render(request, 'newEvent/index.html', {'loggedIn':  request.user.is_authenticated, 'backgrounds': backgrounds})
     
 def selectBackground(request):
     if request.htmx:
 
         event_id = request.POST['event_id']
+        selected_bg_id = request.POST['selected_image']
+
+        print(selected_bg_id)
+        selected_bg = Background.objects.get(id=selected_bg_id)
         event = Event.objects.get(pk=event_id)
         invitation = Invitation.objects.get(event=event)
 
         if request.user.is_authenticated:
             if event.owner == request.user:
                 # TODO: Add card to inviation
-                # Invitation.objects.create(
-                #     event = event,
-                # )
-                # REdirect to guest page
+                invitation.background = selected_bg
+                invitation.save()
+                print(invitation)
                 print('sup')
 
             else: 
@@ -135,8 +141,9 @@ def getEvents(request):
      # TODO: return events that a user has, with their card images, dates, other things that go on the list of events
     if request.user.is_authenticated:
         if event.owner == request.user:
-            events = Event.objects.filter(host=)
-            print('sup')
+            events = Event.objects.filter(owner=event.owner)
+            print(events)
+            # print('sup')
 
         else: 
             return HttpResponseClientRedirect("/login")
