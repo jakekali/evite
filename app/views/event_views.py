@@ -86,17 +86,14 @@ def createEvent(request):
                 host=request.POST.get('host_name')
                 )
 
-        event_id = event.pk
-
-        print(event_id)
-        print(files['file'])
+        event_id = event.pk        
 
         # TODO: create inviation here with card
-        invitation = Invitation.objects.create(
-                event=event,
-                card=files['file']
-            )
+        invitation = Invitation.objects.create(event=event)
+        card_photo = request.FILES.get('file')
+        invitation.card.save(card_photo.name, card_photo)
 
+        print(invitation.card)
         out = render(request, 'newEvent/background_selection.html', {'loggedIn':  request.user.is_authenticated,
                                                                     'backgrounds' : backgrounds,
                                                                     'event_id': event_id})
@@ -121,7 +118,7 @@ def selectBackground(request):
         invitation = Invitation.objects.get(event=event)
 
         if request.user.is_authenticated:
-            if event.owner == request.user:
+            if event.owner == request.uAser:
                 # TODO: Add card to inviation
                 invitation.background = selected_bg
                 invitation.save()
@@ -141,7 +138,7 @@ def getEvents(request):
      # TODO: return events that a user has, with their card images, dates, other things that go on the list of events
     if request.user.is_authenticated:
         if event.owner == request.user:
-            events = Event.objects.filter(owner=event.owner)
+            owned_events = Event.objects.filter(owner=event.owner)
             print(events)
             # print('sup')
 
