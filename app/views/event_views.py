@@ -5,13 +5,14 @@ from django.contrib.auth.models import User
 from ..models.events import Event
 from ..models.permissions import Permissions
 from ..models.backgrounds import Background
+from ..models.invitation import Invitation
 from django_htmx.http import HttpResponseClientRedirect, retarget
 import base64
 
 
 backgrounds = Background.objects.all()
 
-# backgrounds = [
+# backgrounds_list = [
 #     { "name": "ocean",
 #     "url": "https://images.unsplash.com/photo-1682687982468-4584ff11f88a?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 #     },
@@ -42,8 +43,12 @@ backgrounds = Background.objects.all()
 #     { "name": "easter hot cross buns with chocolate eggs on a wooden table jesus food coffee cup",
 #         "url": "https://plus.unsplash.com/premium_photo-1710267557925-4c05618b8caf?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 #     }
-    
 #     ]
+
+# # add everything from ^ to database
+# for bg_data in backgrounds_list:
+#     background = Background(title_bg=bg_data["name"], pattern_bg=bg_data["url"])
+#     background.save()
 
 def myEvents(request):
     # if not request.user.is_authenticated:
@@ -81,12 +86,14 @@ def createEvent(request):
                 host=request.POST.get('host_name')
                 )
 
-        event_id = event.pk
-
-        print(event_id)
+        event_id = event.pk        
 
         # TODO: create inviation here with card
+        invitation = Invitation.objects.create(event=event)
+        card_photo = request.FILES.get('file')
+        invitation.card.save(card_photo.name, card_photo)
 
+        print(invitation.card)
         out = render(request, 'newEvent/background_selection.html', {'loggedIn':  request.user.is_authenticated,
                                                                     'backgrounds' : backgrounds,
                                                                     'event_id': event_id})
@@ -96,21 +103,26 @@ def createEvent(request):
 
     else:
         # TODO add background images via database instead of this import
+        ## check up ^
         return render(request, 'newEvent/index.html', {'loggedIn':  request.user.is_authenticated, 'backgrounds': backgrounds})
     
 def selectBackground(request):
     if request.htmx:
 
         event_id = request.POST['event_id']
+        selected_bg_id = request.POST['selected_image']
+
+        print(selected_bg_id)
+        selected_bg = Background.objects.get(id=selected_bg_id)
         event = Event.objects.get(pk=event_id)
+        invitation = Invitation.objects.get(event=event)
 
         if request.user.is_authenticated:
-            if event.owner == request.user:
+            if event.owner == request.uAser:
                 # TODO: Add card to inviation
-                # Invitation.objects.create(
-                #     event = event,
-                # )
-                # REdirect to guest page
+                invitation.background = selected_bg
+                invitation.save()
+                print(invitation)
                 print('sup')
 
             else: 
@@ -123,12 +135,19 @@ def eventPreview(request):
 
 
 def getEvents(request):
-    # TODO: return events that a user has, with their card images, dates, other things that go on the list of events
-    pass
+     # TODO: return events that a user has, with their card images, dates, other things that go on the list of events
+    if request.user.is_authenticated:
+        if event.owner == request.user:
+            owned_events = Event.objects.filter(owner=event.owner)
+            print(events)
+            # print('sup')
+
+        else: 
+            return HttpResponseClientRedirect("/login")
 
 
-def getGuests(request):
-    # TODO get all the guests for an event (request.POST[event_id])
+# def getGuests(request):
+#     # TODO get all the guests for an event (request.POST[event_id])
     
-def setsRVSP(request):
-    #TODO 
+# def setsRVSP(request):
+#     #TODO 
