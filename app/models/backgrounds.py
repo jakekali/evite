@@ -3,6 +3,6 @@ from django.conf import settings
 
 class Background(models.Model):
     title_bg = models.CharField(max_length=500)
-    pattern_bg = models.CharField()
+    pattern_bg = models.CharField(unique=True)
 
 # add in initial backgrounds from admin panel on create
