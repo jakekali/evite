@@ -6,6 +6,7 @@ from ..models.events import Event
 from ..models.permissions import Permissions
 from ..models.backgrounds import Background
 from ..models.invitation import Invitation
+
 from django_htmx.http import HttpResponseClientRedirect, retarget
 import base64
 
@@ -131,7 +132,12 @@ def selectBackground(request):
 
 
 def eventPreview(request):
-    return render(request, 'inviteView/animation.html', {'loggedIn':  request.user.is_authenticated})
+    # get all the invitations
+    invite = Invitation.objects.all()[1]
+    print(invite)
+    print(invite.card.url)
+
+    return render(request, 'inviteView/animation.html', {'loggedIn':  request.user.is_authenticated, 'invites': invite})
 
 
 def getEvents(request):
@@ -145,9 +151,11 @@ def getEvents(request):
         else: 
             return HttpResponseClientRedirect("/login")
 
+def getGuests(request):
+    # TODO get all the guests for an event (request.POST[event_id])
+    pass
 
-# def getGuests(request):
-#     # TODO get all the guests for an event (request.POST[event_id])
-    
-# def setsRVSP(request):
-#     #TODO 
+def setsRVSP(request):
+    #TODO 
+    pass
+

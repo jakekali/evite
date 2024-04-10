@@ -1,29 +1,37 @@
 <div class="home-hero section-container" id="background_selection">
-    <form hx-encoding='multipart/form-data' hx-post='/createEvent/background/' style="display: flex; flex-wrap: wrap; justify-content: center;">
-        <div class="home-container05" style="padding: 10px">
+    
+    <form 
+    {% if event_id %}
+    hx-encoding='multipart/form-data' hx-post='/createEvent/background/'
+    {% endif %}
+    style=" flex-wrap: wrap; justify-content: center;">
+        <h3 class="home-text11" style="text-align: center; width=100%">Select a Background</h3>
+        <div style="padding: 10px">
             {% csrf_token %}
 
+            
+            {% if event_id %}
+            <input type="hidden" name="event_id" value="{{ event_id }}">
+            {% endif %}            
+        </div>
+        <div id="image-container" style="display: flex; flex-wrap: wrap; justify-content: flex-start; width: 80vw">
             <input
                 type="text" 
                 id="search_query" 
                 name="search_query" 
                 placeholder="Search for images"
                 class="home-textinput white_input"
+                style="width: 100%; margin: 10px;"
             />
-            {% if event_id %}
-            <input type="hidden" name="event_id" value="{{ event_id }}">
-            {% endif %}
-            <button type="submit" class="home-button button">Select</button>
-            
-        </div>
-        <div id="image-container" style="display: flex; flex-wrap: wrap; justify-content: flex-start; width: 70vw">
             {% for image in backgrounds %}
-                <label style="width: 20vw; height: 15vw; margin: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <label style="width: 20vw; height: 15vw; padding: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                     <input type="radio" name="selected_image" value="{{ image.pk }}" style="display: none;">
                     <img src="{{ image.pattern_bg }}" alt="{{ image.title_bg }}" style="width: 100%; height: 100%; object-fit: cover;">
                 </label>
             {% endfor %}
         </div>
+        <button type="submit" id="background_selection_submit" class="home-button button home-white-button" >Preview Your Invitation</button>
+
     </form>
 </div>
 
@@ -80,4 +88,17 @@
             });
         });
     });
+
+    {% if not event_id%}
+    sumbit_button = document.getElementById('background_selection_submit');
+    sumbit_button.addEventListener('click', function() {
+            alert('Please create an event first');
+            upload_file = document.getElementById('cardUpload');
+            upload_file.scrollIntoView()
+            return false;
+    });
+    {% endif %}
+
+    
+
 </script>

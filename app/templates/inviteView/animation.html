@@ -1,5 +1,11 @@
-{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animation</title>
+</head>
+<body>
 
+{% load static %}
 <div style="background-color: grey">
 
         <div id="all">
@@ -29,6 +35,7 @@
 	
     
     <script>
+        var image = {{ invite.card.url }};
         (function() {
 
         var firstTime = true;
@@ -277,6 +284,8 @@
 
     </script> 
 </div>
+</body
+</html>
 
 
 
