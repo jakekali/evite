@@ -5,10 +5,12 @@
         src="https://play.teleporthq.io/static/svg/default-img.svg"
         class="home-image2"
         id="card_image_details"
+
       />
       <div class="home-container04">
         <form id='form' hx-encoding='multipart/form-data' hx-post='/createEvent/' >
-            <span class="home-text11">Event Details</span>
+            <h3 class="home-text11" style="text-align: center; width=100%">Event Details</h3>
+
             <div class="home-container05">
                 <input
                     type="text"
@@ -25,7 +27,7 @@
                     name='host_name'
                 />
                 <input
-                    type="text"
+                    type="datetime-local"
                     required="true"
                     placeholder="Date &amp; Time"
                     class="home-textinput2 input"
@@ -45,8 +47,8 @@
                 />
                 
                 <input id="fileInput" type='file' name='file'>
-                <button class="home-button button">
-                    Button
+                <button class="home-button button" id="sumbit_button">
+                    Submit
                 </button>
             </div>
         </form>
@@ -59,4 +61,15 @@
     fileInput.onchange = inputFileHandler;
 
 
+    const submitButton = document.getElementById('sumbit_button');
+    submitButton.onclick = function() {
+        if (fileInput.files.length === 0) {
+            alert('Please select an image');
+            upload_file = document.getElementById('cardUpload');
+            upload_file.scrollIntoView();
+            return;
+        }
+        const eventDetailsFormContainer = document.getElementById('background_selection');
+        eventDetailsFormContainer.scrollIntoView();
+    };
 </script>

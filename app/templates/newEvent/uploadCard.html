@@ -1,6 +1,6 @@
 <div class="home-hero section-container">
     <div class="home-max-width max-width-container">
-      <div class="home-hero1" ondrop="dropHandler(event);"
+      <div id="cardUpload" class="home-hero1" ondrop="dropHandler(event);"
       ondragover="dragOverHandler(event);">
             <div class="home-image1">
                 
@@ -49,9 +49,14 @@
         }
 
     function inputFileHandler() {
+      
+        const file_input = document.getElementById('fileInput');
+        if (file_input.files.length === 0) {
+            return;
+        }
         console.log('fileInput change event');
         console.log('fileInput.files', fileInput.files);
-        const file_input = document.getElementById('fileInput');
+
         // ensure that the first file is an image
         if (file_input.files[0].type.startsWith('image/')) {
             // ensure that the aspect ratio is 5:7
@@ -62,6 +67,7 @@
                 console.log('image.height', image.height);
                 console.log('image.width / image.height', image.width / image.height);
                 if (Math.round(image.width * 100 / image.height) !== Math.round(5 * 100/ 7)) {
+                    file_input.value = "";
                     alert('Please upload an image with an aspect ratio of 5:7');
                     return;
                 }

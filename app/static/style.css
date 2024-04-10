@@ -100,6 +100,7 @@
   border-width: 1px;
   border-radius: 4px;
   background-color: var(--dl-color-gray-white);
+  resize: none;
 }
 .list {
   width: 100%;
@@ -119,7 +120,6 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding-top: var(--dl-space-space-fiveunits);
   justify-content: center;
 }
 .max-width-container {
