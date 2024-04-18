@@ -3,10 +3,10 @@
 <head>
     <title>Animation</title>
 </head>
-<body>
+<body style='background-image: url(" {{invitation.background.pattern_bg  }} ");'>
 
 {% load static %}
-<div style="background-color: grey">
+<div >
 
         <div id="all">
 
@@ -16,14 +16,14 @@
                 <!-- blue flap going up -->
             </canvas> 
 
-            <canvas id="card", style="border:1px solid #246720; filter: drop-shadow(0px 5px 5px #000000); z-index: inherit;">
+            <canvas id="card", style="border:0px solid #246720; filter: drop-shadow(0px 5px 5px #000000); z-index: inherit;">
             </canvas> 
 
-            <canvas id="env_blue", style="border:1px solid #FFFF00; z-index: inherit;">
+            <canvas id="env_blue", style="border:0px solid #FFFF00; z-index: inherit;">
                  <!--whole bottom -->
             </canvas> 
 
-            <canvas id="env_white", style="border:1px solid rgb(11, 77, 63); filter: drop-shadow(0px 5px 5px #000000); z-index: inherit;">
+            <canvas id="env_white", style="border:0px solid rgb(11, 77, 63); filter: drop-shadow(0px 5px 5px #000000); z-index: inherit;">
             </canvas> 
 
             <canvas id="flap_closed">
@@ -35,7 +35,6 @@
 	
     
     <script>
-        var image = {{ invite.card.url }};
         (function() {
 
         var firstTime = true;
@@ -194,7 +193,7 @@
                 context_flap_open.drawImage(flap_open, 0, 0, canvas_flap_open.width, canvas_flap_open.height);}
 
             var card = new Image();
-            card.src = "{% static 'images/card.png' %}";
+            card.src = "{{ invitation.card.url}}";
             card.onload = function() {
                 context_card.drawImage(card, 0, 0, canvas_card.width, canvas_card.height);}
 

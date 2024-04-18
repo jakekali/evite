@@ -1,0 +1,153 @@
+{% extends "base/base.html" %}
+
+{% block title %} View Guests{% endblock %}
+
+{% block content %}
+<div class="home-main">
+
+    <h1>Guests</h1>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.4/css/dataTables.dataTables.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.4/js/dataTables.js"></script>
+
+    <div style="width: 100%; border-width: 1px;border-style: solid; display: flex; text-align: center">
+        <div style="height:24px;width:20%;background-color: red;">No</div>
+        <div style="height:24px;width:20%;background-color: green;">Yes</div>
+        <div style="height:24px;width:20%;background-color: yellow;">Maybe</div>
+        <div style="height:24px;width:20%;background-color: grey;">Pending</div>
+        <div style="height:24px;width:20%;background-color: white;">Not Sent</div>
+
+
+    </div>
+
+
+    <table class="guestTable">
+        <thead>
+            <tr>
+                <th>Guest Name</th>
+                <th>Guest Email</th>
+                <th>Guest Phone</th>
+                <th>Guest RSVP</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody id="guest_data">
+            <tr>
+                <td>
+                    <input  type="hidden" name="guest_id" value="1"> 
+                    <input  type="text" name="full_name" value="John Doe"> 
+                </td>
+                <td>
+                    <input  type="email" name="email" value="johnDoe@gmail.com">
+                </td>
+                <td>
+                    <input  type="tel" name="phone" value="123-456-7890">
+                </td>
+                <td>
+                    <select  name="status">
+                        <option value="yes" selected="selected">Yes</option>
+                        <option value="no">No</option>
+                        <option value="maybe">Maybe</option>
+                        <option value="pending">Pending</option>
+                        <option value="notSent">Not Sent</option>
+                    </select>
+                </td>
+                <td>
+                    <button style="margin=0px"class="home-button button">Delete</button>
+                </td>
+
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+                    <input  type="hidden" name="guest_id"> 
+                    <input  type="text" name="full_name" placeholder="Name"> 
+                </td>
+                <td>
+                    <input  type="email" name="email" placeholder="Email">
+                </td>
+                <td>
+                    <input  type="tel" name="phone" placeholder="Phone Number">
+                </td>
+                <td>
+                    <select  name="status">
+                        <option value="yes" selected="selected">Yes</option>
+                        <option value="no">No</option>
+                        <option value="maybe">Maybe</option>
+                        <option value="pending">Pending</option>
+                        <option value="notSent">Not Sent</option>
+                    </select>
+                </td>
+                <td>
+                    <button style="margin=0px"class="home-button button">Submit</button>
+                </td>
+            </tr>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            let guest_table = $('.guestTable').DataTable();
+            guest_table.draw();
+        });
+
+        $('#guest_data').bind('change', function(event) {
+            let target = event.target;
+            let row = target.closest('tr');
+            let data = {
+                guest_id: row.querySelector('input[name="guest_id"]').value,
+                full_name: row.querySelector('input[name="full_name"]').value,
+                email: row.querySelector('input[name="email"]').value,
+                phone: row.querySelector('input[name="phone"]').value,
+                status: row.querySelector('select[name="status"]').value
+            };
+            console.log(data);
+
+            // Send data to server
+            fetch('/editGuests/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+        });
+
+        // if the delete button is clicked on a row, send a request to delete the row
+        $('#guest_data').bind('click', function(event) {
+            let target = event.target;
+            if (target.tagName === 'BUTTON') {
+                let row = target.closest('tr');
+                let data = {
+                    guest_id: row.querySelector('input[name="guest_id"]').value
+                };
+                console.log(data);
+
+                //
+                fetch('/editGuests/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'  
+                    },
+                    body: JSON.stringify(data)
+                })
+
+            }
+        });
+
+
+
+
+    </script>
+
+    
+</div>
+
+{% endblock %}

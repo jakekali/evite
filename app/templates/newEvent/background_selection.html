@@ -15,68 +15,107 @@
             {% endif %}            
         </div>
         <div id="image-container" style="display: flex; flex-wrap: wrap; justify-content: flex-start; width: 80vw">
-            <input
+            {% comment %} <input
                 type="text" 
                 id="search_query" 
                 name="search_query" 
                 placeholder="Search for images"
                 class="home-textinput white_input"
                 style="width: 100%; margin: 10px;"
-            />
+            /> {% endcomment %}
             {% for image in backgrounds %}
                 <label style="width: 20vw; height: 15vw; padding: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                     <input type="radio" name="selected_image" value="{{ image.pk }}" style="display: none;">
                     <img src="{{ image.pattern_bg }}" alt="{{ image.title_bg }}" style="width: 100%; height: 100%; object-fit: cover;">
                 </label>
             {% endfor %}
-        </div>
-        <button type="submit" id="background_selection_submit" class="home-button button home-white-button" >Preview Your Invitation</button>
 
+        </div>
+
+        <div class="paginate" style="display: inline-block;"></div>
+        <button id="background_selection_submit" class="home-button button" style="margin-top: 20px;">Submit</button>
+            
     </form>
-</div>
 
 <script>
-    var images = document.querySelectorAll('#image-container img');
-    // only show the first 6 images
-    images.forEach(function(image, index) {
-        if (index < 6) {
-            image.parentNode.style.display = 'block';
-            image.style.border = '2px solid white';
-            image.style.borderRadius = '5px';
-        } else {
-            image.parentNode.style.display = 'none';
-            image.style.border = '2px solid white';
-            image.style.borderRadius = '5px';
-        }
-    });
 
-
+    {% comment %} // filter images based on search query, and the current page
     document.getElementById('search_query').addEventListener('input', function() {
-        var searchQuery = this.value.toLowerCase();
-        var images = document.querySelectorAll('#image-container img');
-        var matchCount = 0;
+        var query = this.value.toLowerCase();
+        // create a javascript list of images, that match the search query
+        var show_images = [];
+        var hide_images = [];
         
+        var images = document.querySelectorAll('#image-container img');
         images.forEach(function(image) {
-            var altText = image.getAttribute('alt').toLowerCase();
-            
-            if (altText.includes(searchQuery)) {
-                if (matchCount < 6) {
-                    image.parentNode.style.display = 'block';
-                    matchCount++;
-                } else {
-                    image.parentNode.style.display = 'none';
-                }
+            var title = image.alt.toLowerCase();
+            if (title.includes(query)) {
+                show_images.push(image);
             } else {
-                image.parentNode.style.display = 'none';
+                hide_images.push(image);
             }
         });
+
+        // calculate the number of pages, based on 8 images per page
+        console.log(show_images.length)
+        var pages = Math.ceil(show_images.length / 8);
+        buildPagination(pages, 1);
+
+
+
     });
+
+    // create a function that builds the pagination
+    function buildPagination(numPages, activePage){
+        var paginate = document.querySelector('.paginate');
+
+        while (paginate.lastElementChild) {
+            paginate.removeChild(paginate.lastElementChild);
+        }
+
+        for (var i = 1; i <= numPages; i++) {
+            var a = document.createElement('a');  
+            a.innerHTML = i;
+            if (i == 1){
+                a.style.textDecoration = 'underline';
+            }
+
+            console.log(i, activePage)
+            if (i == activePage) {
+                // add a class to the active page
+                a.classList.add('active');
+            }
+            a.addEventListener('click', function() {
+                // remove active from all children
+                var children = paginate.children;
+                for (var j = 0; j < children.length; j++) {
+                    children[j].classList.remove('active');
+                    children[j].style.textDecoration = 'none';
+                }
+
+                // add active to the clicked element
+                this.classList.add('active');
+                // add an underline to the active element
+                this.style.textDecoration = 'underline';
+
+
+            });
+            paginate.appendChild(a);
+        }
+    } {% endcomment %}
+
+    var images = document.querySelectorAll('#image-container img');
+    images.forEach(function(image) {
+        image.style.border = '2px solid white';
+        image.style.borderRadius = '5px';
+    })
 
     // when a radio button is selected, add a border to the image
     document.querySelectorAll('#image-container input').forEach(function(input) {
+        
+
         input.addEventListener('change', function() {
             var images = document.querySelectorAll('#image-container img');
-            
             images.forEach(function(image) {
                 if (image.parentNode.querySelector('input').checked) {
                     image.style.border = '2px solid blue';
@@ -89,16 +128,18 @@
         });
     });
 
-    {% if not event_id%}
     sumbit_button = document.getElementById('background_selection_submit');
     sumbit_button.addEventListener('click', function() {
+        // check that the user has created an event, by seeing if the event_id is in the form in javascript
+        if (!document.querySelector('input[name="event_id"]')) {
             alert('Please create an event first');
             upload_file = document.getElementById('cardUpload');
             upload_file.scrollIntoView()
             return false;
+        }
     });
-    {% endif %}
 
     
 
 </script>
+</div>
