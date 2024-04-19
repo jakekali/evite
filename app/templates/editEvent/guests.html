@@ -11,14 +11,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.4/js/dataTables.js"></script>
 
-    <div style="width: 100%; border-width: 1px;border-style: solid; display: flex; text-align: center">
+    <div style="width: 50%; border-width: 1px;border-style: solid; display: flex; text-align: center; margin: 25px">
         <div style="height:24px;width:20%;background-color: red;">No</div>
         <div style="height:24px;width:20%;background-color: green;">Yes</div>
         <div style="height:24px;width:20%;background-color: yellow;">Maybe</div>
         <div style="height:24px;width:20%;background-color: grey;">Pending</div>
         <div style="height:24px;width:20%;background-color: white;">Not Sent</div>
-
-
     </div>
 
 
@@ -54,12 +52,12 @@
                     </select>
                 </td>
                 <td>
-                    <button style="margin=0px"class="home-button button">Delete</button>
+                    <button style="margin: 0px"class="home-button button">Delete</button>
                 </td>
 
             </tr>
         </tbody>
-        <tfoot>
+        <tfoot style="background-color: var(--dl-color-pallet-green);">
             <tr>
                 <td>
                     <input  type="hidden" name="guest_id"> 
@@ -73,15 +71,15 @@
                 </td>
                 <td>
                     <select  name="status">
-                        <option value="yes" selected="selected">Yes</option>
+                        <option value="yes" >Yes</option>
                         <option value="no">No</option>
                         <option value="maybe">Maybe</option>
                         <option value="pending">Pending</option>
-                        <option value="notSent">Not Sent</option>
+                        <option value="notSent" selected="selected">Not Sent</option>
                     </select>
                 </td>
                 <td>
-                    <button style="margin=0px"class="home-button button">Submit</button>
+                    <button style="margin: 0px"class="home-button button">Submit</button>
                 </td>
             </tr>
     </table>

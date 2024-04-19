@@ -27,6 +27,27 @@
     
           }
         </style>
+
+        <style>
+            .example {
+              overflow-y: scroll; /* Add the ability to scroll */
+              background-color: #dfe7dd;
+
+            }
+            
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            .example::-webkit-scrollbar {
+                display: none;
+            }
+            
+            /* Hide scrollbar for IE, Edge and Firefox */
+            .example {
+              -ms-overflow-style: none;  /* IE and Edge */
+              scrollbar-width: 0;  /* Firefox */
+            }
+            </style>
+
+
         <link
           rel="stylesheet"
           href="https://unpkg.com/animate.css@4.1.1/animate.css"
@@ -43,16 +64,22 @@
         <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
 
       </head>
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="example">
 
     <link rel="stylesheet" href="{% static 'style.css' %}" /> 
     <link href="{% static 'index.css' %}" rel="stylesheet" />
-    <div class="home-container">
+    
+        {% block navbar %}
         <!-- Navbar from navbar.html -->
         {% include "base/navbar.html" %}
-        {% block content %}
         {% endblock %}
-    </div>
+
+
+        {% block content %}
+        
+        {% endblock %}
+    
+    {% block footer%}
     <div class="home-footer">
         <div class="max-width-container">
           <footer class="home-footer1">
@@ -97,6 +124,7 @@
           </footer>
         </div>
       </div>
+    {% endblock %}
     <script
       defer=""
       src="https://unpkg.com/@teleporthq/teleport-custom-scripts"
