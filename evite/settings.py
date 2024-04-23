@@ -30,7 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SITE_ID = 2
-
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 # Application definition
 
 INSTALLED_APPS = [
