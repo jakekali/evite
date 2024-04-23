@@ -1,0 +1,145 @@
+<div class="home-hero section-container" id="background_selection">
+    
+    <form 
+    {% if event_id %}
+    hx-encoding='multipart/form-data' hx-post='/createEvent/background/'
+    {% endif %}
+    style=" flex-wrap: wrap; justify-content: center;">
+        <h3 class="home-text11" style="text-align: center; width=100%">Select a Background</h3>
+        <div style="padding: 10px">
+            {% csrf_token %}
+
+            
+            {% if event_id %}
+            <input type="hidden" name="event_id" value="{{ event_id }}">
+            {% endif %}            
+        </div>
+        <div id="image-container" style="display: flex; flex-wrap: wrap; justify-content: flex-start; width: 80vw">
+            {% comment %} <input
+                type="text" 
+                id="search_query" 
+                name="search_query" 
+                placeholder="Search for images"
+                class="home-textinput white_input"
+                style="width: 100%; margin: 10px;"
+            /> {% endcomment %}
+            {% for image in backgrounds %}
+                <label style="width: 20vw; height: 15vw; padding: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <input type="radio" name="selected_image" value="{{ image.pk }}" style="display: none;">
+                    <img src="{{ image.pattern_bg }}" alt="{{ image.title_bg }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </label>
+            {% endfor %}
+
+        </div>
+
+        <div class="paginate" style="display: inline-block;"></div>
+        <button id="background_selection_submit" class="home-button button" style="margin-top: 20px;">Submit</button>
+            
+    </form>
+
+<script>
+
+    {% comment %} // filter images based on search query, and the current page
+    document.getElementById('search_query').addEventListener('input', function() {
+        var query = this.value.toLowerCase();
+        // create a javascript list of images, that match the search query
+        var show_images = [];
+        var hide_images = [];
+        
+        var images = document.querySelectorAll('#image-container img');
+        images.forEach(function(image) {
+            var title = image.alt.toLowerCase();
+            if (title.includes(query)) {
+                show_images.push(image);
+            } else {
+                hide_images.push(image);
+            }
+        });
+
+        // calculate the number of pages, based on 8 images per page
+        console.log(show_images.length)
+        var pages = Math.ceil(show_images.length / 8);
+        buildPagination(pages, 1);
+
+
+
+    });
+
+    // create a function that builds the pagination
+    function buildPagination(numPages, activePage){
+        var paginate = document.querySelector('.paginate');
+
+        while (paginate.lastElementChild) {
+            paginate.removeChild(paginate.lastElementChild);
+        }
+
+        for (var i = 1; i <= numPages; i++) {
+            var a = document.createElement('a');  
+            a.innerHTML = i;
+            if (i == 1){
+                a.style.textDecoration = 'underline';
+            }
+
+            console.log(i, activePage)
+            if (i == activePage) {
+                // add a class to the active page
+                a.classList.add('active');
+            }
+            a.addEventListener('click', function() {
+                // remove active from all children
+                var children = paginate.children;
+                for (var j = 0; j < children.length; j++) {
+                    children[j].classList.remove('active');
+                    children[j].style.textDecoration = 'none';
+                }
+
+                // add active to the clicked element
+                this.classList.add('active');
+                // add an underline to the active element
+                this.style.textDecoration = 'underline';
+
+
+            });
+            paginate.appendChild(a);
+        }
+    } {% endcomment %}
+
+    var images = document.querySelectorAll('#image-container img');
+    images.forEach(function(image) {
+        image.style.border = '2px solid white';
+        image.style.borderRadius = '5px';
+    })
+
+    // when a radio button is selected, add a border to the image
+    document.querySelectorAll('#image-container input').forEach(function(input) {
+        
+
+        input.addEventListener('change', function() {
+            var images = document.querySelectorAll('#image-container img');
+            images.forEach(function(image) {
+                if (image.parentNode.querySelector('input').checked) {
+                    image.style.border = '2px solid blue';
+                    image.style.borderRadius = '5px';
+                } else {
+                    image.style.border = '2px solid white';
+                    image.style.borderRadius = '5px';
+                }
+            });
+        });
+    });
+
+    sumbit_button = document.getElementById('background_selection_submit');
+    sumbit_button.addEventListener('click', function() {
+        // check that the user has created an event, by seeing if the event_id is in the form in javascript
+        if (!document.querySelector('input[name="event_id"]')) {
+            alert('Please create an event first');
+            upload_file = document.getElementById('cardUpload');
+            upload_file.scrollIntoView()
+            return false;
+        }
+    });
+
+    
+
+</script>
+</div>

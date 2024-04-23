@@ -2,3 +2,4 @@ Django>=3.2.7
 psycopg2>=2.8
 Pillow
 django-allauth
+django-htmx

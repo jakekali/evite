@@ -8,4 +8,4 @@ class Invitation(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     background = models.ForeignKey(Background, on_delete=models.CASCADE, null=True)
     envelope = models.ForeignKey(Envelope, on_delete=models.CASCADE, null=True)
-    card = models.ImageField(upload_to="invitations")
+    card = models.ImageField(upload_to='cards/', null=True, blank=True)

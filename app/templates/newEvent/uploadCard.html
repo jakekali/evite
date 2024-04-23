@@ -1,0 +1,103 @@
+<div class="home-hero section-container">
+    <div class="home-max-width max-width-container">
+      <div id="cardUpload" class="home-hero1" ondrop="dropHandler(event);"
+      ondragover="dragOverHandler(event);">
+            <div class="home-image1">
+                
+                <svg viewBox="0 0 1024 1024" class="home-icon10">
+                    <path
+                        d="M214 768h596v86h-596v-86zM384 682v-256h-170l298-298 298 298h-170v256h-256z"
+                    >
+                    </path>
+                </svg>
+
+            
+                
+                <span class="home-text10">Drag Your Card</span>
+                <label id="file name" for="fileInput" class="custom-file-upload">
+                    Click to Upload
+                </label>
+            </div>
+      </div>
+    </div>
+</div>
+
+<script>
+
+
+    function dragOverHandler(ev) {
+        console.log("File(s) in drop zone");
+
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+    }
+
+    function dropHandler(ev) {
+        console.log("File(s) dropped");
+
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+
+        if (ev.dataTransfer.files) {
+            console.log("File(s) dropped");
+            console.log("ev.dataTransfer.files", ev.dataTransfer.files);
+            const file = ev.dataTransfer.files[0];
+            const file_input = document.getElementById('fileInput');
+            file_input.files = ev.dataTransfer.files;
+            inputFileHandler();
+            }
+        }
+
+    function inputFileHandler() {
+      
+        const file_input = document.getElementById('fileInput');
+        if (file_input.files.length === 0) {
+            return;
+        }
+        console.log('fileInput change event');
+        console.log('fileInput.files', fileInput.files);
+
+        // ensure that the first file is an image
+        if (file_input.files[0].type.startsWith('image/')) {
+            // ensure that the aspect ratio is 5:7
+            const image = new Image();
+            image.src = URL.createObjectURL(file_input.files[0]);
+            image.onload = function() {
+                console.log('image.width', image.width);
+                console.log('image.height', image.height);
+                console.log('image.width / image.height', image.width / image.height);
+                if (Math.round(image.width * 100 / image.height) !== Math.round(5 * 100/ 7)) {
+                    file_input.value = "";
+                    alert('Please upload an image with an aspect ratio of 5:7');
+                    return;
+                }
+                const image_details = document.getElementById('card_image_details');
+                var url = URL.createObjectURL(file_input.files[0]);
+                image_details.src = url;
+
+                document.getElementById('file name').innerHTML = file_input.files[0].name;
+                
+                const details_form = document.getElementById("event_details_form_container");
+                details_form.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+            }
+        }
+        else {
+            alert('Please upload an image file');
+            return;
+        }
+    };
+</script>
+
+
+
+<style>
+    input[type="file"] {
+    display: none;
+    }
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+</style>

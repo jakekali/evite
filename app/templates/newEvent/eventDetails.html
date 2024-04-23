@@ -1,0 +1,75 @@
+<div class="home-trending-items section-container">
+    <div class="home-container03" id='event_details_form_container'>
+      <img
+        alt="image"
+        src="https://play.teleporthq.io/static/svg/default-img.svg"
+        class="home-image2"
+        id="card_image_details"
+
+      />
+      <div class="home-container04">
+        <form id='form' hx-encoding='multipart/form-data' hx-post='/createEvent/' >
+            <h3 class="home-text11" style="text-align: center; width=100%">Event Details</h3>
+
+            <div class="home-container05">
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Event Name"
+                    class="home-textinput input"
+                    name='event_name'
+                />
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Host Name"
+                    class="home-textinput1 input"
+                    name='host_name'
+                />
+                <input
+                    type="datetime-local"
+                    required="true"
+                    placeholder="Date &amp; Time"
+                    class="home-textinput2 input"
+                    name='date_time'
+                />
+                <textarea
+                    placeholder="Description"
+                    class="home-textarea textarea"
+                    name='description'
+                ></textarea>
+                <input
+                    type="text"
+                    required="true"
+                    placeholder="Location"
+                    class="home-textinput3 input"
+                    name='location'
+                />
+                
+                <input id="fileInput" type='file' name='file'>
+                <button class="home-button button" id="sumbit_button">
+                    Submit
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    fileInput.onchange = inputFileHandler;
+
+
+    const submitButton = document.getElementById('sumbit_button');
+    submitButton.onclick = function() {
+        if (fileInput.files.length === 0) {
+            alert('Please select an image');
+            upload_file = document.getElementById('cardUpload');
+            upload_file.scrollIntoView();
+            return;
+        }
+        const eventDetailsFormContainer = document.getElementById('background_selection');
+        eventDetailsFormContainer.scrollIntoView();
+    };
+</script>

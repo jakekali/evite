@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+
+{% block title %} NEW EVENT{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        <iframe
+            style="width: 100vw; height: 92vh;"
+            src="/invite/event_id/{{ event.pk }}/"
+            class="preview-iframe">
+          
+        </iframe>
+        <div class="preview-container1" style="height: 6vh">
+            <button type="button" class="button" style="margin-right: 1vw"> 
+                Next
+            </button>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block footer%}
+{% endblock %}
+
