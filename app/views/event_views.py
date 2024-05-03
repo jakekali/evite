@@ -9,8 +9,12 @@ from ..models.invitation import Invitation
 from ..models.guests import Guest
 
 from django_htmx.http import HttpResponseClientRedirect, retarget
+from django.core.mail import send_mass_mail, send_mail
 import base64
 import math
+import os
+
+
 
 def myEvents(request):
     # if not request.user.is_authenticated:
@@ -95,7 +99,7 @@ def eventPreview(request, event_id=None):
         print(invitation.card.url)
         return render(request, 'newEvent/preview.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'invitation': invitation})
 
-def get_animation(request, event_id):
+def get_animation(request, event_id, guest_id):
     if event_id is None:
         return HttpResponse("Event ID not provided")
     else:
@@ -219,3 +223,48 @@ def setsRVSP(request):
     #TODO 
     pass
 
+
+def sendAllInvitations(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    guests = Guest.objects.filter(event = event)
+
+    datatuple = []
+
+    if request.user.is_authenticated:
+        if event.owner == request.user:
+            for guest in guests:
+                subject = "You're Invited! 🎉🎉🎉" # idek that u could add emojis LOL
+                message = f"Dear {guest.first_name} {guest.last_name}, here is your unique link: http://localhost:8000/invite/${event_id}/${guest.id}"
+                sender = request.user.email # maybe just use a default email like evite@gmail.com bc you need to verify the email in sendgrid
+                recipient_list = [guest.email]
+                
+                email_data = (subject, message, sender, recipient_list)
+                datatuple.append(email_data)
+
+            send_mass_mail(datatuple)
+            return HttpResponse(f"All emails have been sent!")
+        else:
+            return HttpResponse("You do not have permission to send invitations")
+
+
+def sendOneInvitation(request, event_id, guest_id):
+    event = Event.objects.get(pk=event_id)
+    guest = Guest.objects.get(id = guest_id)
+
+    if request.user.is_authenticated:
+        if event.owner == request.user:
+            subject = "You're Invited! 🎉🎉🎉" # idek that u could add emojis LOL
+            message = f"Dear {guest.first_name} {guest.last_name}, here is your unique link: http://localhost:8000/invite/{event_id}/{guest.id}"
+            
+            sender = request.user.email
+            # request.user.email = "liocfemia@gmail.com"
+
+            print("Sender " + request.user.email)
+            print("To " + guest.email)
+
+            sender = request.user.email
+
+            send_mail(subject, message, sender, [guest.email])
+            return HttpResponse(f"Email sent to {guest.email}!")
+        else:
+            return HttpResponse("You do not have permission to send invitations")

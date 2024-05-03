@@ -48,10 +48,3 @@ class Guest(models.Model):
                 fields=['event', 'phone'], name='unique_phone'
             )
         ]
-
-    def sendMassEmail(self, event, subject, message, from_email):
-        message = (
-            subject, message, from_email, []
-        )
-
-    
