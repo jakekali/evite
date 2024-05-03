@@ -27,8 +27,10 @@ def myEvents(request):
                                                     })
 
 def createEvent(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/accounts/login/')
+    
     if request.htmx:
-        
         event = Event.objects.create(
             title=request.POST.get('event_name'),
             description=request.POST.get('description'),
@@ -78,6 +80,9 @@ def selectBackground(request):
 
             else: 
                 return HttpResponseClientRedirect("/login")
+            
+        else:
+            return HttpResponseClientRedirect("/login")
 
 
 
