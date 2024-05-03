@@ -15,7 +15,10 @@ urlpatterns = [
     path('editGuests/', event_views.editGuests, name='editGuests'),
     path('editGuests/<str:hash>', event_views.editGuests, name='editGuests'),
 
+    # path('invite/event_id/<int:event_id>/', event_views.get_animation, name='invite'),
+    path('invite/<int:event_id>/<int:guest_id>', event_views.get_animation, name='invite'),
 
-    path('invite/event_id/<int:event_id>/', event_views.get_animation, name='invite'),
-    
+    # send invitation(s)
+    path('sendInvitation/<int:event_id>/<int:guest_id>/', event_views.sendOneInvitation, name='send-invitation'),  
+    path('sendAllInvitations/<int:event_id>/', event_views.sendAllInvitations, name='send-all-invitations'),  
 ]

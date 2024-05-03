@@ -25,7 +25,3 @@ class Guest(models.Model):
                 fields=['event', 'email'], name='unique_guest'
             )
         ]
-    def sendMassEmail(self, event, subject, message, from_email):
-        message = (
-            subject, message, from_email, []
-        )
