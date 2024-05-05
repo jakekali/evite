@@ -170,10 +170,17 @@ def newGuest(request):
     data = json.loads(request.body)
 
     event_id = int(data['event_id'])
-    full_name = data['full_name']
+    name = data['name']
     email = data['email']
     phone = data['phone']
     status = data['status']
+
+    if status == 'yes':
+        rsvp = True
+    elif status == 'no':
+        rsvp = False
+    else:
+        rsvp = None
 
     # if the current user is the owner of the event, they can add a new guest
     if request.user.is_authenticated:
@@ -181,7 +188,7 @@ def newGuest(request):
         if event.owner == request.user:
             guest = Guest.objects.create(
                 event=event,
-                full_name=full_name,
+                name=name,
                 email=email,
                 phone=phone,
                 status=status
@@ -190,13 +197,14 @@ def newGuest(request):
             data = {
                 'message': 'Guest added successfully',
                 'guest_id': guest.id,
-                'full_name': full_name,
-                'email': email,
-                'phone': phone,
-                'status': status
+                'name': guest.name,
+                'email': guest.email,
+                'phone': guest.phone,
+                'status': guest.status,
+                'hash'  : guest.hash,
             }
-            json_data = json.dumps(data)
 
+            json_data = json.dumps(data)
             return HttpResponse(json_data, content_type='application/json')
         
         else:

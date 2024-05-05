@@ -59,7 +59,7 @@
             </tr>
             {% endfor %}
         </tbody>
-        <tfoot style="background-color: var(--dl-color-pallet-green);">
+        <tfoot  style="background-color: var(--dl-color-pallet-green);">
             <tr>
                 <td>
                     <input  type="hidden" name="guest_id"> 
@@ -81,12 +81,19 @@
                     </select>
                 </td>
                 <td>
-                    <button style="margin: 0px"class="home-button button">Submit</button>
+                    <button id="newGuest" style="margin: 0px"class="home-button button">Submit</button>
                 </td>
             </tr>
     </table>
 
     <script>
+        
+        // Function to clean phone numbers
+        function cleanPhoneNumber(phoneNumber) {
+            // Remove all non-digit characters from the phone number
+            return phoneNumber.replace(/\D/g, '');
+        }
+
         $(document).ready(function() {
             let guest_table = $('.guestTable').DataTable();
             guest_table.draw();
@@ -99,7 +106,7 @@
                 guest_id: row.querySelector('input[name="guest_id"]').value,
                 full_name: row.querySelector('input[name="full_name"]').value,
                 email: row.querySelector('input[name="email"]').value,
-                phone: row.querySelector('input[name="phone"]').value,
+                phone: cleanPhoneNumber(row.querySelector('input[name="phone"]').value),
                 status: row.querySelector('select[name="status"]').value
             };
             console.log(data);
@@ -120,7 +127,7 @@
         });
 
         // if the delete button is clicked on a row, send a request to delete the row
-        $('#guest_data').bind('click', function(event) {
+        $('.guest_data').bind('click', function(event) {
             let target = event.target;
             if (target.tagName === 'BUTTON') {
                 let row = target.closest('tr');
@@ -143,20 +150,22 @@
         });
 
         // if the submit button is clicked on the footer row, send a request to add a new row
-        $('#guest_data').bind('click', function(event) {
+        $('#newGuest').bind('click', function(event) {
+            console.log('new guest');
             let target = event.target;
             if (target.tagName === 'BUTTON') {
                 let row = target.closest('tr');
                 let data = {
-                    full_name: row.querySelector('input[name="full_name"]').value,
+                    event_id: '{{ event.pk }}',
+                    name: row.querySelector('input[name="full_name"]').value,
                     email: row.querySelector('input[name="email"]').value,
-                    phone: row.querySelector('input[name="phone"]').value,
+                    phone: cleanPhoneNumber(row.querySelector('input[name="phone"]').value),
                     status: row.querySelector('select[name="status"]').value
                 };
                 console.log(data);
 
                 // Send data to server
-                fetch('/newGuest/', {
+                var resp = fetch('/newGuest/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -164,6 +173,22 @@
                     },  
                     body: JSON.stringify(data)
                 })
+                
+                resp.then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+
+                if (resp.status == 200) {
+                    location.reload();
+                }
+
+
+
+            }
+
+        });
+
 
     </script>
 
