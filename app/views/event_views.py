@@ -116,14 +116,19 @@ def getEvents(request):
             return HttpResponseClientRedirect("/login")
 
 def guestPage(request, event_id=None):
-    #e
-    return render(request, 'editEvent/guests.html', {'loggedIn':  request.user.is_authenticated})
+    if event_id is None:
+        return HttpResponse("Event ID not provided")
+    else:
+        event = Event.objects.get(pk=event_id)
+        guests = Guest.objects.filter(event=event)
+
+        return render(request, 'editEvent/guests.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'guests': guests})
 
 def editGuests(request, hash=None):
     import json
     data = json.loads(request.body)
 
-    guest_id = int(data['guests_id'])
+    guest_id = int(data['guest_id'])
     full_name = data['full_name']
     email = data['email']
     phone = data['phone']
@@ -131,25 +136,76 @@ def editGuests(request, hash=None):
 
     # if the current user is the owner of the event, they can edit the guest list
     if request.user.is_authenticated:
-        guest = Guest.objects.filter(id=guest_id)
+        guest = Guest.objects.filter(id=guest_id)[0]
         if guest.event.owner == request.user:
             guest.full_name = full_name
             guest.email = email
             guest.phone = phone
             guest.status = status
             guest.save()
-            return HttpResponse("Guest updated")
+
+            data = {
+                'message': 'Guest updated successfully',
+                'guest_id': guest_id,
+                'full_name': full_name,
+                'email': email,
+                'phone': phone,
+                'status': status
+            }
+            json_data = json.dumps(data)
+
+            return HttpResponse(json_data, content_type='application/json')
         
         else:
-            return HttpResponse("You do not have permission to edit this guest list")
+            data = {
+                'message': 'You do not have permission to edit this guest list'
+            }
+            return HttpResponse(json.dumps(data), content_type='application/json')
     else:
-        return HttpResponse("You must be logged in to edit a guest list")
-
-
-
+        return HttpResponse(json.dumps({'message': 'You must be logged in to edit this guest list'}), content_type='application/json')
     
-            
-    
+
+def newGuest(request):
+    import json
+    data = json.loads(request.body)
+
+    event_id = int(data['event_id'])
+    full_name = data['full_name']
+    email = data['email']
+    phone = data['phone']
+    status = data['status']
+
+    # if the current user is the owner of the event, they can add a new guest
+    if request.user.is_authenticated:
+        event = Event.objects.filter(id=event_id)[0]
+        if event.owner == request.user:
+            guest = Guest.objects.create(
+                event=event,
+                full_name=full_name,
+                email=email,
+                phone=phone,
+                status=status
+            )
+
+            data = {
+                'message': 'Guest added successfully',
+                'guest_id': guest.id,
+                'full_name': full_name,
+                'email': email,
+                'phone': phone,
+                'status': status
+            }
+            json_data = json.dumps(data)
+
+            return HttpResponse(json_data, content_type='application/json')
+        
+        else:
+            data = {
+                'message': 'You do not have permission to add a guest to this event'
+            }
+            return HttpResponse(json.dumps(data), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({'message': 'You must be logged in to add a guest to this event'}), content_type='application/json')
 
 def setsRVSP(request):
     #TODO 

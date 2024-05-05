@@ -31,24 +31,25 @@
             </tr>
         </thead>
         <tbody id="guest_data">
+            {% for guest in guests %}
             <tr>
                 <td>
-                    <input  type="hidden" name="guest_id" value="1"> 
-                    <input  type="text" name="full_name" value="John Doe"> 
+                    <input  type="hidden" name="guest_id" value="{{guest.pk}}"> 
+                    <input  type="text" name="full_name" value="{{guest.name}}"> 
                 </td>
                 <td>
-                    <input  type="email" name="email" value="johnDoe@gmail.com">
+                    <input  type="email" name="email" value="{{guest.email}}">
                 </td>
                 <td>
-                    <input  type="tel" name="phone" value="123-456-7890">
+                    <input  type="tel" name="phone" value="{{guest.phone}}">
                 </td>
                 <td>
                     <select  name="status">
-                        <option value="yes" selected="selected">Yes</option>
-                        <option value="no">No</option>
-                        <option value="maybe">Maybe</option>
-                        <option value="pending">Pending</option>
-                        <option value="notSent">Not Sent</option>
+                        <option value="yes" {% if guest.status == 'yes' %} selected="selected" {% endif %}>Yes</option>
+                        <option value="no" {% if guest.status == 'no' %} selected="selected" {% endif %}>No</option>
+                        <option value="maybe" {% if guest.status == 'maybe' %} selected="selected" {% endif %}>Maybe</option>
+                        <option value="pending" {% if guest.status == 'pending' %} selected="selected" {% endif %}>Pending</option>
+                        <option value="notSent" {% if guest.status == 'notSent' %} selected="selected" {% endif %}>Not Sent</option>
                     </select>
                 </td>
                 <td>
@@ -56,6 +57,7 @@
                 </td>
 
             </tr>
+            {% endfor %}
         </tbody>
         <tfoot style="background-color: var(--dl-color-pallet-green);">
             <tr>
@@ -140,8 +142,28 @@
             }
         });
 
+        // if the submit button is clicked on the footer row, send a request to add a new row
+        $('#guest_data').bind('click', function(event) {
+            let target = event.target;
+            if (target.tagName === 'BUTTON') {
+                let row = target.closest('tr');
+                let data = {
+                    full_name: row.querySelector('input[name="full_name"]').value,
+                    email: row.querySelector('input[name="email"]').value,
+                    phone: row.querySelector('input[name="phone"]').value,
+                    status: row.querySelector('select[name="status"]').value
+                };
+                console.log(data);
 
-
+                // Send data to server
+                fetch('/newGuest/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },  
+                    body: JSON.stringify(data)
+                })
 
     </script>
 

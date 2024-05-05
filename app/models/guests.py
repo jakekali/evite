@@ -9,8 +9,7 @@ from django.core.mail import send_mail
     
 class Guest(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
+    name = models.CharField(max_length=50, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=15, null=True, blank=True)      # is there better way? theres a phone number field pkg that exists if we want giggle
     address = models.CharField(max_length=200, null=True, blank=True)

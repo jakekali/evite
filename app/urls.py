@@ -13,6 +13,7 @@ urlpatterns = [
     path('createEvent/guests/<int:event_id>/', event_views.guestPage, name='addGuests'),
 
     path('editGuests/', event_views.editGuests, name='editGuests'),
+    path('newGuest/', event_views.newGuest, name='newGuest'),
     path('editGuests/<str:hash>', event_views.editGuests, name='editGuests'),
 
 
