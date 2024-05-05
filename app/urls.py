@@ -16,7 +16,7 @@ urlpatterns = [
     path('newGuest/', event_views.newGuest, name='newGuest'),
     path('editGuests/<str:hash>', event_views.editGuests, name='editGuests'),
 
-    # path('invite/event_id/<int:event_id>/', event_views.get_animation, name='invite'),
+    path('invite/<int:event_id>/', event_views.get_animation, name='preview-invite'),
     path('invite/<int:event_id>/<int:guest_id>', event_views.get_animation, name='invite'),
 
     # send invitation(s)
