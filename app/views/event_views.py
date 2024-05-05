@@ -133,7 +133,7 @@ def editGuests(request, hash=None):
     data = json.loads(request.body)
 
     guest_id = int(data['guest_id'])
-    full_name = data['full_name']
+    name = data['name']
     email = data['email']
     phone = data['phone']
     status = data['status']
@@ -142,7 +142,7 @@ def editGuests(request, hash=None):
     if request.user.is_authenticated:
         guest = Guest.objects.filter(id=guest_id)[0]
         if guest.event.owner == request.user:
-            guest.full_name = full_name
+            guest.name = name
             guest.email = email
             guest.phone = phone
             guest.status = status
@@ -151,7 +151,7 @@ def editGuests(request, hash=None):
             data = {
                 'message': 'Guest updated successfully',
                 'guest_id': guest_id,
-                'full_name': full_name,
+                'name': guest.name,
                 'email': email,
                 'phone': phone,
                 'status': status
@@ -226,45 +226,20 @@ def setsRVSP(request):
 
 def sendAllInvitations(request, event_id):
     event = Event.objects.get(pk=event_id)
-    guests = Guest.objects.filter(event = event)
-
-    datatuple = []
-
-    if request.user.is_authenticated:
-        if event.owner == request.user:
-            for guest in guests:
-                subject = "You're Invited! 🎉🎉🎉" # idek that u could add emojis LOL
-                message = f"Dear {guest.first_name} {guest.last_name}, here is your unique link: http://localhost:8000/invite/${event_id}/${guest.id}"
-                sender = request.user.email # maybe just use a default email like evite@gmail.com bc you need to verify the email in sendgrid
-                recipient_list = [guest.email]
-                
-                email_data = (subject, message, sender, recipient_list)
-                datatuple.append(email_data)
-
-            send_mass_mail(datatuple)
-            return HttpResponse(f"All emails have been sent!")
-        else:
-            return HttpResponse("You do not have permission to send invitations")
+    if request.user.is_authenticated and event.owner == request.user:
+        event.sendInvites()
+        return HttpResponse(f"All emails have been sent!")
+    else:
+        return HttpResponse("You do not have permission to send invitations")
 
 
 def sendOneInvitation(request, event_id, guest_id):
     event = Event.objects.get(pk=event_id)
-    guest = Guest.objects.get(id = guest_id)
+    guest = Guest.objects.get(pk=guest_id, event=event)
 
     if request.user.is_authenticated:
         if event.owner == request.user:
-            subject = "You're Invited! 🎉🎉🎉" # idek that u could add emojis LOL
-            message = f"Dear {guest.first_name} {guest.last_name}, here is your unique link: http://localhost:8000/invite/{event_id}/{guest.id}"
-            
-            sender = request.user.email
-            # request.user.email = "liocfemia@gmail.com"
-
-            print("Sender " + request.user.email)
-            print("To " + guest.email)
-
-            sender = request.user.email
-
-            send_mail(subject, message, sender, [guest.email])
+            guest.send_invitation()
             return HttpResponse(f"Email sent to {guest.email}!")
         else:
             return HttpResponse("You do not have permission to send invitations")

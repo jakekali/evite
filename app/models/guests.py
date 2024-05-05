@@ -39,6 +39,20 @@ class Guest(models.Model):
         editable=False
     )
 
+    def __str__(self):
+        return f'{self.name} - {self.email} - {self.phone} - {self.status} - {self.event}'
+    
+    def send_invitation(self):
+        subject = "You're Invited! 🎉🎉🎉"
+        message = f"""Dear {self.name},
+
+        {self.event.host} has sent you an invitation to {self.event.title}!
+        <br>
+        <a href="http://localhost:8000/invite/{self.event.id}/{self.id}"> Click Here to Review & Reply </a>"""
+        sender = 'evite.ece464@gmail.com'
+
+        send_mail(subject, message, sender, [self.email], html_message=message)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

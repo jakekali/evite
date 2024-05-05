@@ -11,12 +11,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.4/js/dataTables.js"></script>
 
-    <div style="width: 50%; border-width: 1px;border-style: solid; display: flex; text-align: center; margin: 25px">
-        <div style="height:24px;width:20%;background-color: red;">No</div>
-        <div style="height:24px;width:20%;background-color: green;">Yes</div>
-        <div style="height:24px;width:20%;background-color: yellow;">Maybe</div>
-        <div style="height:24px;width:20%;background-color: grey;">Pending</div>
-        <div style="height:24px;width:20%;background-color: white;">Not Sent</div>
+    <div id="statusOverall" style="width: 50%; border-width: 1px;border-style: solid; display: flex; text-align: center; margin: 25px">
+   
     </div>
 
 
@@ -27,7 +23,7 @@
                 <th>Guest Email</th>
                 <th>Guest Phone</th>
                 <th>Guest RSVP</th>
-                <th>Delete</th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="guest_data">
@@ -35,7 +31,7 @@
             <tr>
                 <td>
                     <input  type="hidden" name="guest_id" value="{{guest.pk}}"> 
-                    <input  type="text" name="full_name" value="{{guest.name}}"> 
+                    <input  type="text" name="name" value="{{guest.name}}"> 
                 </td>
                 <td>
                     <input  type="email" name="email" value="{{guest.email}}">
@@ -49,11 +45,10 @@
                         <option value="no" {% if guest.status == 'no' %} selected="selected" {% endif %}>No</option>
                         <option value="maybe" {% if guest.status == 'maybe' %} selected="selected" {% endif %}>Maybe</option>
                         <option value="pending" {% if guest.status == 'pending' %} selected="selected" {% endif %}>Pending</option>
-                        <option value="notSent" {% if guest.status == 'notSent' %} selected="selected" {% endif %}>Not Sent</option>
                     </select>
                 </td>
                 <td>
-                    <button style="margin: 0px"class="home-button button">Delete</button>
+                    <button style="margin: 0px"class="home-button button">Resend</button>
                 </td>
 
             </tr>
@@ -63,7 +58,7 @@
             <tr>
                 <td>
                     <input  type="hidden" name="guest_id"> 
-                    <input  type="text" name="full_name" placeholder="Name"> 
+                    <input  type="text" name="name" placeholder="Name"> 
                 </td>
                 <td>
                     <input  type="email" name="email" placeholder="Email">
@@ -72,13 +67,13 @@
                     <input  type="tel" name="phone" placeholder="Phone Number">
                 </td>
                 <td>
-                    <select  name="status">
+                    {% comment %} <select name="status" disabled>
                         <option value="yes" >Yes</option>
                         <option value="no">No</option>
                         <option value="maybe">Maybe</option>
                         <option value="pending">Pending</option>
                         <option value="notSent" selected="selected">Not Sent</option>
-                    </select>
+                    </select> {% endcomment %}
                 </td>
                 <td>
                     <button id="newGuest" style="margin: 0px"class="home-button button">Submit</button>
@@ -87,6 +82,46 @@
     </table>
 
     <script>
+         // write a function that caculated the number of guests that have RSVP'd yes, no, maybe, pending, and not sent
+        // and display the results in the .statusOverall div
+        function getStatusCounts() {
+            let statusCounts = {
+                yes: 0,
+                no: 0,
+                maybe: 0,
+                pending: 0,
+            };
+
+            // loop through each row in the table
+            let rows = document.querySelectorAll('.guestTable tbody tr');
+            rows.forEach(row => {
+                let status = row.querySelector('select[name="status"]').value;
+                statusCounts[status]++;
+            });
+
+            // calculate the percentage of each status
+            let total = rows.length;
+            let percentages = {};
+            for (let status in statusCounts) {
+                percentages[status] = (statusCounts[status] / total) * 100;
+            }
+
+            // update the statusOverall div
+            let statusOverall = document.getElementById('statusOverall');
+            statusOverall.innerHTML = '';
+            for (let status in percentages) {
+                let div = document.createElement('div');
+                div.style.height = '24px';
+                div.style.width = `${percentages[status]}%`;
+                div.style.backgroundColor = status === 'yes' ? 'green' : status === 'no' ? 'red' : status === 'maybe' ? 'yellow' : status === 'pending' ? 'grey' : 'white';
+                div.innerHTML = status + ", "+ statusCounts[status];
+                if (statusCounts[status] <= 0){
+                    div.style.display = 'none';
+                }
+                statusOverall.appendChild(div);
+            }
+        }
+
         
         // Function to clean phone numbers
         function cleanPhoneNumber(phoneNumber) {
@@ -95,8 +130,12 @@
         }
 
         $(document).ready(function() {
-            let guest_table = $('.guestTable').DataTable();
+            let guest_table = $('.guestTable').DataTable(
+            );
+            // make all the columns searchable
             guest_table.draw();
+            getStatusCounts();
+
         });
 
         $('#guest_data').bind('change', function(event) {
@@ -104,7 +143,7 @@
             let row = target.closest('tr');
             let data = {
                 guest_id: row.querySelector('input[name="guest_id"]').value,
-                full_name: row.querySelector('input[name="full_name"]').value,
+                name: row.querySelector('input[name="name"]').value,
                 email: row.querySelector('input[name="email"]').value,
                 phone: cleanPhoneNumber(row.querySelector('input[name="phone"]').value),
                 status: row.querySelector('select[name="status"]').value
@@ -124,6 +163,9 @@
             .then(data => {
                 console.log('Success:', data);
             })
+
+            getStatusCounts();
+
         });
 
         // if the delete button is clicked on a row, send a request to delete the row
@@ -157,12 +199,24 @@
                 let row = target.closest('tr');
                 let data = {
                     event_id: '{{ event.pk }}',
-                    name: row.querySelector('input[name="full_name"]').value,
+                    name: row.querySelector('input[name="name"]').value,
                     email: row.querySelector('input[name="email"]').value,
                     phone: cleanPhoneNumber(row.querySelector('input[name="phone"]').value),
-                    status: row.querySelector('select[name="status"]').value
+                    status: 'pending'
                 };
                 console.log(data);
+
+                // check if the email or phone number is already in the table, if so alert the user and return
+                let rows = document.querySelectorAll('.guestTable tbody tr');
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    let email = row.querySelector('input[name="email"]').value;
+                    let phone = cleanPhoneNumber(row.querySelector('input[name="phone"]').value);
+                    if (email === data.email || phone === data.phone) {
+                        alert('A guest with the same email or phone number already exists in the table. Please update the existing guest instead.');
+                        return;
+                    }
+                }
 
                 // Send data to server
                 var resp = fetch('/newGuest/', {
@@ -179,9 +233,7 @@
                     console.log('Success:', data);
                 })
 
-                if (resp.status == 200) {
-                    location.reload();
-                }
+                location.reload();
 
 
 
@@ -189,6 +241,7 @@
 
         });
 
+       
 
     </script>
 
