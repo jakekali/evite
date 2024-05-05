@@ -100,7 +100,7 @@ def eventPreview(request, event_id=None):
         print(invitation.card.url)
         return render(request, 'newEvent/preview.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'invitation': invitation})
 
-def get_animation(request, event_id, guest_id):
+def get_animation(request, event_id):
     if event_id is None:
         return HttpResponse("Event ID not provided")
     else:
@@ -108,6 +108,15 @@ def get_animation(request, event_id, guest_id):
         invitation = Invitation.objects.get(event=event)
         print(invitation.card.url)
         return render(request, 'inviteView/animation.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'invitation': invitation})
+    
+def getInvitePage(request, event_id, guest_id):
+    if event_id is None:
+        return HttpResponse("Event ID not provided")
+    else:
+        event = Event.objects.get(pk=event_id)
+        guest = Guest.objects.get(pk=guest_id)
+        return render(request, 'inviteView/rsvp_page.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'guest' 
+                                                          : guest})
 
 def getEvents(request):
      # TODO: return events that a user has, with their card images, dates, other things that go on the list of events

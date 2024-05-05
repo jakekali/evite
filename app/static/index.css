@@ -642,6 +642,42 @@
     background-color: #dfe7dd;
   }
 
+  .rsvp-container {
+    width: 100%;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    align-items: center;
+    padding-top: 100px;
+    flex-direction: column;
+
+  }
+
+  .rsvp-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+
+.rsvp-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.rsvp-text01 {
+    color: rgb(23, 23, 32);
+    height: auto;
+    font-size: 3rem;
+    text-align: center;
+    font-family: Jost;
+    font-weight: 400;
+    line-height: 20px;
+    text-decoration: none;
+}
+
 @media(max-width: 1200px) {
   .home-main {
     height: 2515px;

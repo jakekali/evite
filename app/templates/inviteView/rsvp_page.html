@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+{% block title %} NEW EVENT{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        <iframe
+            style="width: 100vw; height: 92vh;"
+            src="/invite/event_id/{{ event.pk }}/"
+            class="preview-iframe">
+          
+        </iframe>
+        <div class="rsvp-container" style="height: 60vh">
+            <div class="rsvp-row">
+                <h1 class="rsvp-text01">{{event.title}}</h1>
+            </div>
+            <div class="rsvp-row">
+                <button class="rsvp-button" htmx-post="/invite/rsvp/{{ event.pk }}/yes/">YES</button>
+                <button class="rsvp-button" htmx-post="/invite/rsvp/{{ event.pk }}/maybe/">MAYBE</button>
+                <button class="rsvp-button" htmx-post="/invite/rsvp/{{ event.pk }}/no/">NO</button>
+            </div>
+            <div class="rsvp-row">
+                <p class="rsvp-text02">{{event.description}}</p>
+            </div>
+            <div class="rsvp-row">
+                <div class="rsvp-col">
+                    <h3 class="rsvp-text03">Host</h3>
+                    <p class="rsvp-text04">{{event.host}}</p>
+                </div>
+                <div class="rsvp-col">
+                    <h3 class="rsvp-text03">Date</h3>
+                    <p class="rsvp-text04">{{event.date_time}}</p>
+                </div>
+                <div class="rsvp-col">
+                    <h3 class="rsvp-text03">Location</h3>
+                    <p class="rsvp-text04">{{event.location}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block footer%}
+{% endblock %}
+
