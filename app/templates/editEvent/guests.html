@@ -169,7 +169,8 @@
         });
 
         // if the delete button is clicked on a row, send a request to delete the row
-        $('.guest_data').bind('click', function(event) {
+        $('button:contains("Resend")').bind('click', function(event) {
+            console.log('resend');
             let target = event.target;
             if (target.tagName === 'BUTTON') {
                 let row = target.closest('tr');
@@ -179,13 +180,17 @@
                 console.log(data);
 
                 //
-                fetch('/editGuests/', {
-                    method: 'DELETE',
+                fetch('/sendInvitation/{{event.pk}}/'+ data.guest_id +'/', {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'  
                     },
                     body: JSON.stringify(data)
+                }).then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    alert(data.message)
                 })
 
             }

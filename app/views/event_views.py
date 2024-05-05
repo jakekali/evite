@@ -14,6 +14,7 @@ import base64
 import math
 import os
 
+import json
 
 
 def myEvents(request):
@@ -240,6 +241,11 @@ def sendOneInvitation(request, event_id, guest_id):
     if request.user.is_authenticated:
         if event.owner == request.user:
             guest.send_invitation()
-            return HttpResponse(f"Email sent to {guest.email}!")
+            data = {
+                'message': 'Email sent to ' + guest.email
+            }
         else:
-            return HttpResponse("You do not have permission to send invitations")
+            data = {
+                'message': 'You do not have permission to send invitations'
+            }
+    return HttpResponse(json.dumps(data), content_type='application/json')
