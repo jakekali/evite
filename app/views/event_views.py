@@ -3,12 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from ..models.events import Event
-from ..models.permissions import Permissions
 from ..models.backgrounds import Background
 from ..models.invitation import Invitation
-from ..models.guests import Guest
+from ..models.guests import Guest, STATUS_CHOICES
 
-from django_htmx.http import HttpResponseClientRedirect, retarget
+from django_htmx.http import HttpResponseClientRedirect, retarget, HttpResponseClientRefresh
 from django.core.mail import send_mass_mail, send_mail
 import base64
 import math
@@ -18,18 +17,13 @@ import json
 
 
 def myEvents(request):
-    # if not request.user.is_authenticated:
-    #     return HttpResponseRedirect('/accounts/login/')
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/accounts/login/')
     
-    # usersEvents = Event.objects.filter(owner=request.user)
-
+    invitations = Invitation.objects.filter(event__owner=request.user)
+    
     return render(request, 'manage/myEvents.html', {'loggedIn':  request.user.is_authenticated,
-                                                    'events' : {'name1': 'Event 1', 
-                                                                'name2': 'Event 2', 
-                                                                'name3': 'Event 3',  
-                                                                'name4': 'Event 4', 
-                                                                'name5': 'Event 5' }
-                                                    })
+                                                    'invitations' : invitations })
 
 def createEvent(request):
     if not request.user.is_authenticated:
@@ -109,12 +103,28 @@ def get_animation(request, event_id):
         print(invitation.card.url)
         return render(request, 'inviteView/animation.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'invitation': invitation})
     
-def getInvitePage(request, event_id, guest_id):
-    if event_id is None:
+def getInvitePage(request, hash):
+    if request.htmx:
+        guest = Guest.objects.get(hash=hash)
+
+        if request.htmx.trigger == 'not_attending':
+            guest.status = 'Not Attending'
+            guest.save()
+
+        if request.htmx.trigger == 'attending':
+            guest.status = 'Attending'
+            guest.save()
+
+        return HttpResponseClientRedirect("/invite/" + hash)
+
+    if hash is None:
         return HttpResponse("Event ID not provided")
     else:
-        event = Event.objects.get(pk=event_id)
-        guest = Guest.objects.get(pk=guest_id)
+        guest = Guest.objects.get(hash=hash)
+        event = guest.event
+        if guest.status == 'Not Sent' or guest.status == 'Sent':
+            guest.status = 'Opened'
+            guest.save()
         return render(request, 'inviteView/rsvp_page.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'guest' 
                                                           : guest})
 
@@ -130,13 +140,15 @@ def getEvents(request):
             return HttpResponseClientRedirect("/login")
 
 def guestPage(request, event_id=None):
+    
     if event_id is None:
         return HttpResponse("Event ID not provided")
     else:
         event = Event.objects.get(pk=event_id)
         guests = Guest.objects.filter(event=event)
 
-        return render(request, 'editEvent/guests.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'guests': guests})
+        return render(request, 'editEvent/guests1.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'guests': guests,
+                                                         'STATUS_CHOICES': STATUS_CHOICES})
 
 def editGuests(request, hash=None):
     import json
@@ -180,6 +192,37 @@ def editGuests(request, hash=None):
     
 
 def newGuest(request):
+
+    if request.htmx:
+        for key, value in request.POST.items():
+            print(f'{key}: {value}')
+
+        event_id = request.POST['event_id']
+        name = request.POST['name']
+        email = request.POST['email']
+        phone = request.POST['phone']
+
+        # clean the phone number to remove any non numeric characters, and trim it to 11 characters
+        phone = ''.join(filter(str.isdigit, phone))[:11]
+
+
+
+        if request.user.is_authenticated:
+            if request.user == Event.objects.get(pk=event_id).owner:
+
+                Guest.objects.create(
+                    event=Event.objects.get(pk=event_id),
+                    name=name,
+                    email=email,
+                    phone=phone,
+                    status='Sent'
+                )
+
+                return HttpResponseClientRefresh()
+
+        
+
+
     import json
     data = json.loads(request.body)
 
@@ -229,9 +272,7 @@ def newGuest(request):
     else:
         return HttpResponse(json.dumps({'message': 'You must be logged in to add a guest to this event'}), content_type='application/json')
 
-def setsRVSP(request):
-    #TODO 
-    pass
+
 
 
 def sendAllInvitations(request, event_id):
@@ -257,4 +298,10 @@ def sendOneInvitation(request, event_id, guest_id):
             data = {
                 'message': 'You do not have permission to send invitations'
             }
+
+    if request.htmx:
+        return HttpResponse(f'Sent!')
+    
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+

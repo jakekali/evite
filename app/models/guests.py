@@ -5,16 +5,35 @@ from .events import Event
 from django.core.mail import send_mail
 
 STATUS_CHOICES = [
-    ('Not Sent', 'Not Sent'),
-    ('Sent', 'Sent'),
-    ('Opened', 'Opened'),
-    ('Attending', 'Attending'),
-    ('Not Attending', 'Not Attending'),
-    ('Maybe', 'Maybe'),
-    ('No Response', 'No Response')
+    ('not_sent', 'Not Sent'),
+    ('opened', 'Opened'),
+    ('sent', 'Sent'),
+    ('attending', 'Attending'),
+    ('not_attending', 'Not Attending'),
 ]
     
 class Guest(models.Model):
+
+    @staticmethod
+    def get_pretty_status(status: str) -> str:
+        for choice in STATUS_CHOICES:
+            if choice[0] == status:
+                return choice[1]
+        return status
+    
+    @staticmethod
+    def get_status_color(status: str) -> str:
+        if status == 'not_sent' or status == 'Not Sent':
+            return 'grey'
+        elif status == 'sent' or status == 'Sent':
+            return 'blue'
+        elif status == 'opened' or status == 'Opened':
+            return 'yellow'
+        elif status == 'attending' or status == 'Attending':
+            return 'green'
+        elif status == 'not_attending' or status == 'Not Attending':
+            return 'red'
+        
 
     def create_new_hash():
         import random
@@ -42,13 +61,49 @@ class Guest(models.Model):
     def __str__(self):
         return f'{self.name} - {self.email} - {self.phone} - {self.status} - {self.event}'
     
+    def getJSON(self):
+        import json
+        return json.dumps({
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'status': self.status,
+            'event': self.event.id
+        })
+    
+    def get_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'status': self.status,
+        }
+
+    def get_row(self):
+        options = ''
+        for status in STATUS_CHOICES:
+            options += f'<option value="{status[0]}" {"selected" if self.status == status[0] else ""}>{status[1]}</option>'
+
+        return [f'<input type="hidden" value="{self.pk}" name="guest_id">',
+                f'<input type="hidden" value="{self.pk}" name="guest_id">' + 
+                f'<input type="text" value="{self.name}" name="name">',
+                f'<input type="text" value="{self.email}" name="email">',
+                f'<input type="text" value="{self.phone}" name="phone">',
+                f'<select name="status">' +
+                    options +
+                f'</select>', 
+                f'<button id="resend_{self.pk}" style="margin: 0px" class="home-button button" onclick="scream({self.pk})">Resend</button>'
+                ]
+    
     def send_invitation(self):
         subject = "You're Invited! 🎉🎉🎉"
         message = f"""Dear {self.name},
 
         {self.event.host} has sent you an invitation to {self.event.title}!
         <br>
-        <a href="http://localhost:8000/invite/{self.event.id}/{self.id}"> Click Here to Review & Reply </a>"""
+        <a href="http://localhost:8000/invite/{self.hash}"> Click Here to Review & Reply </a>"""
         sender = 'evite.ece464@gmail.com'
 
         send_mail(subject, message, sender, [self.email], html_message=message)

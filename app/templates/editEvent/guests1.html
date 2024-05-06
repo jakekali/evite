@@ -1,0 +1,247 @@
+{% extends "base/base.html" %}
+
+{% block title %} View Guests{% endblock %}
+
+{% block content %}
+<div class="home-main">
+
+    <h1>Guests</h1>
+
+    <div id="statusOverall" style="width: 50%; border-width: 1px;border-style: solid; display: flex; text-align: center; margin: 25px">
+   
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.4/css/dataTables.dataTables.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.4/js/dataTables.js"></script>
+
+    <div style="width=100vw">
+        <div hx-get="/getStats/{{event.pk}}" hx-trigger="every 1s">
+        </div>
+    </div>
+    <div style="display: none"id="feedback_message"></div>
+
+    <style>
+        table input{
+            background-color: inherit;
+        }
+    </style>
+
+    <table style="background-color: white;" class="guestTable stripe" id="guest_table">
+        <thead>
+            <tr>
+                <th>Guest ID</th>
+                <th>Guest Name</th>
+                <th>Guest Email</th>
+                <th>Guest Phone</th>
+                <th>Guest RSVP</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="guest_data" >
+            {% for guest in guests %}
+                <tr class="guest_row">
+                    <td>                        
+                        <input  type="hidden" name="guest_id" value="{{guest.pk}}"> 
+                    </td>
+                    <td>
+                        <input  type="text" name="name" value="{{guest.name}}">  
+                    </td>
+                    <td>
+                        <input  type="email" name="email" value="{{guest.email}}">
+                    </td>
+                    <td>
+                        <input  type="tel" name="phone" value="{{guest.phone}}">
+                    </td>
+                    <td>
+                        <select  name="status">
+                            {% for status_choice in STATUS_CHOICES%}
+                            <option value="{{status_choice.0}}" {% if status_choice.0 == guest.status %}selected{% endif %}>{{status_choice.1}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button style="margin: 0px"class="home-button button">Resend</button>
+                    </td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+        <tfoot>
+            <form hx-post='/newGuest/' hx-encoding='multipart/form-data' hx-vals='{"event_id": "{{ event.pk }}"}'>
+            <tr id="newGuest">
+                <td>
+                    <input  type="hidden" name="guest_id"> 
+                </td>
+                <td>
+                    <input  type="text" name="name" placeholder="Name"> 
+                </td>
+                <td>
+                    <input  type="email" name="email" placeholder="Email">
+                </td>
+                <td>
+                    <input  type="tel" name="phone" placeholder="Phone Number">
+                </td>
+                <td>
+                    <button type="submit" id="newGuest" style="margin: 0px " class="home-button button" onclick="newGuest()">Send!</button>
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+            </form>
+    </table>
+
+    
+</div>
+
+<script>
+    // tbody on change
+    $('#guest_data').on('change', function(event){
+        console.log('change');
+        console.log(event.target);
+        row = event.target.parentElement.parentElement;
+        console.log(row);
+        var name = ($(row).find('input[name="name"]').val());
+        var email = ($(row).find('input[name="email"]').val());
+        var phone = ($(row).find('input[name="phone"]').val());
+        var status = ($(row).find('select[name="status"]').val());
+        var guest_id = ($(row).find('input[name="guest_id"]').val());
+
+        updateRow(guest_id, name, email, phone, status);
+        console.log(name, email, phone, status, guest_id);
+
+    });
+
+    function newGuest(){
+
+        // get the values from the form
+        var name = $('#newGuest input[name="name"]').val();
+        var email = $('#newGuest input[name="email"]').val();
+        var phone = $('#newGuest input[name="phone"]').val();
+        
+        htmx.ajax(
+            'POST',
+            '/newGuest/',
+            {
+                values: 
+                {
+                    action : 'new_guest',
+                    event_id: '{{ event.pk }}',
+                    name: name,
+                    email: email,
+                    phone: phone,
+                },
+                source: '#newGuest',
+
+            })
+    }
+
+
+    function scream(guest_id){
+        button_id = `resend_${guest_id}`
+        htmx.ajax(
+            'POST',
+            `/sendInvitation/{{event.pk}}/${guest_id}/`,
+            {
+                values: 
+                {
+                    action : 'resend',
+                    guest_id: guest_id
+                },
+                source: `#${button_id}`,
+
+            }).then(function(response){
+                console.log(response);
+            }
+        );
+
+    }
+
+
+
+    function updateRow(guest_id, name, email, phone, status){
+        htmx.ajax(
+            'POST',
+            '/createEvent/guests/updateRow/',
+            {
+                values: 
+                {
+                    action : 'update_row',
+                    guest_id: guest_id,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    status: status
+                },
+                source: '#feedback_message',
+
+            }).then(function(response){
+                console.log(response);
+            }
+        );
+    }
+
+ 
+
+// make it into a datatable
+$(document).ready(function() {
+    table = $('#guest_table').DataTable({
+        proccessing: true,
+        serverSide: true,
+        ordering: false,
+        
+        ajax: {
+            url: '/createEvent/guests/table/{{ event.pk }}/',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            type: 'POST',
+        },
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                searchable: false
+            },
+        ]
+
+        
+
+    })
+
+    mouseOverButton = false;
+    // set a function that sets this to true when the mouse is over the button
+    $('#guest_table').on('mouseenter', 'button', function(){
+        mouseOverButton = true;
+    });
+    // set a function that sets this to false when the mouse leaves the button
+    $('#guest_table').on('mouseleave', 'button', function(){
+        mouseOverButton = false;
+    });
+
+
+
+    setInterval(function () {
+        // get all elements in focus
+        var focused = document.activeElement;
+        var hovered = document.querySelector(':hover');
+        console.log(hovered)
+        // if the focused element is not an input, then reload the table
+        if (focused.tagName != 'INPUT' && focused.tagName != 'SELECT' && focused.tagName != 'BUTTON') {
+            if (!mouseOverButton) {
+                table.ajax.reload();
+            }
+        }
+
+        
+
+    }, 1000);
+});
+
+
+
+</script>
+    
+
+{% endblock %}

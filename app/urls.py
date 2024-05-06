@@ -3,7 +3,6 @@ from . import views
 from .views import event_views
 from .views import index
 
-
 urlpatterns = [
     path('', index.index, name='index'),
     path('myEvents/', event_views.myEvents, name='myEvents'),
@@ -16,8 +15,14 @@ urlpatterns = [
     path('newGuest/', event_views.newGuest, name='newGuest'),
     path('editGuests/<str:hash>', event_views.editGuests, name='editGuests'),
 
+    path('createEvent/guests/updateRow/', index.updateRow, name='updateRow'),
+    path('createEvent/guests/table/<int:event_id>/', index.getTableData, name='deleteRow'),
+    path('getStats/<int:event_id>/', index.getStats, name='getStats'),
+    
+
     path('invite/event_id/<int:event_id>/', event_views.get_animation, name='preview-invite'),
-    path('invite/<int:event_id>/<int:guest_id>', event_views.getInvitePage, name='invite'),
+    path('invite/<str:hash>', event_views.getInvitePage, name='invite'),
+
 
     # send invitation(s)
     path('sendInvitation/<int:event_id>/<int:guest_id>/', event_views.sendOneInvitation, name='send-invitation'),  

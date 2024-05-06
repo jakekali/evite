@@ -1,0 +1,11 @@
+
+<div class="event_card card" style="height: 50vh">
+    <img class="card-img-top" src="{{invitation.card.url}}" style="width: 10vw"/>
+    <div class="card-body">
+        <h5 class="card-title event_card_title">{{ invitation.event.name }}</h5>
+        <p class="event_card_text card-text">{{invitation.event.description }}</p>
+    </div>
+    <div class="card-body">
+        <button href="/createEvent/guests/{{ invitation.event.pk }}" class="button home-botton">Edit</button>
+    </div>
+</div>

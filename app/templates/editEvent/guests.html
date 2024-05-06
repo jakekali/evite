@@ -27,24 +27,23 @@
             </tr>
         </thead>
         <tbody id="guest_data">
-            {% for guest in guests %}
+            {% comment %} {% for guest in guests %}
             <tr>
                 <td>
                     <input  type="hidden" name="guest_id" value="{{guest.pk}}"> 
-                    <input  type="text" name="name" value="{{guest.name}}"> 
+                    <input  type="text" name="name" value="{{guest.name}}">  
                 </td>
                 <td>
-                    <input  type="email" name="email" value="{{guest.email}}">
+                    <input  type="email" name="email" value="{{guest.email}} {{guest.status}}">
                 </td>
                 <td>
                     <input  type="tel" name="phone" value="{{guest.phone}}">
                 </td>
                 <td>
                     <select  name="status">
-                        <option value="yes" {% if guest.status == 'yes' %} selected="selected" {% endif %}>Yes</option>
-                        <option value="no" {% if guest.status == 'no' %} selected="selected" {% endif %}>No</option>
-                        <option value="maybe" {% if guest.status == 'maybe' %} selected="selected" {% endif %}>Maybe</option>
-                        <option value="pending" {% if guest.status == 'pending' %} selected="selected" {% endif %}>Pending</option>
+                        {% for status_choice in STATUS_CHOICES%}
+                        <option value="{{status_choice.0}}" {% if status_choice.0 == guest.status %}selected{% endif %}>{{status_choice.1}}</option>
+                        {% endfor %}
                     </select>
                 </td>
                 <td>
@@ -52,7 +51,7 @@
                 </td>
 
             </tr>
-            {% endfor %}
+            {% endfor %} {% endcomment %}
         </tbody>
         <tfoot  style="background-color: var(--dl-color-pallet-green);">
             <tr>
@@ -67,13 +66,7 @@
                     <input  type="tel" name="phone" placeholder="Phone Number">
                 </td>
                 <td>
-                    {% comment %} <select name="status" disabled>
-                        <option value="yes" >Yes</option>
-                        <option value="no">No</option>
-                        <option value="maybe">Maybe</option>
-                        <option value="pending">Pending</option>
-                        <option value="notSent" selected="selected">Not Sent</option>
-                    </select> {% endcomment %}
+                    
                 </td>
                 <td>
                     <button id="newGuest" style="margin: 0px"class="home-button button">Submit</button>
@@ -82,7 +75,18 @@
     </table>
 
     <script>
-         // write a function that caculated the number of guests that have RSVP'd yes, no, maybe, pending, and not sent
+        
+        // initialize the DataTable
+        let guest_table = $('.guestTable').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false
+        });
+
+
+
+        // write a function that caculated the number of guests that have RSVP'd yes, no, maybe, pending, and not sent
         // and display the results in the .statusOverall div
         function getStatusCounts() {
             let statusCounts = {
@@ -129,15 +133,7 @@
             return phoneNumber.replace(/\D/g, '');
         }
 
-        $(document).ready(function() {
-            let guest_table = $('.guestTable').DataTable(
-            );
-            // make all the columns searchable
-            guest_table.draw();
-            getStatusCounts();
-
-        });
-
+        
         $('#guest_data').bind('change', function(event) {
             let target = event.target;
             let row = target.closest('tr');
@@ -207,21 +203,51 @@
                     name: row.querySelector('input[name="name"]').value,
                     email: row.querySelector('input[name="email"]').value,
                     phone: cleanPhoneNumber(row.querySelector('input[name="phone"]').value),
-                    status: 'pending'
+                    status: "not_sent"
                 };
-                console.log(data);
 
-                // check if the email or phone number is already in the table, if so alert the user and return
-                let rows = document.querySelectorAll('.guestTable tbody tr');
-                for (let i = 0; i < rows.length; i++) {
-                    let row = rows[i];
-                    let email = row.querySelector('input[name="email"]').value;
-                    let phone = cleanPhoneNumber(row.querySelector('input[name="phone"]').value);
-                    if (email === data.email || phone === data.phone) {
-                        alert('A guest with the same email or phone number already exists in the table. Please update the existing guest instead.');
-                        return;
+                var guest_data = guest_table.data()
+                guest_data_array = []
+                console.log(guest_data)
+                for (let i = 0; i < guest_data.length; i++) {
+                    guest_data_array.push([])
+                    for (let j = 0; j < guest_data[i].length; j++) {
+                        // for each <input> in the row, push the value to the guest_data_array, using regex
+                        let matches = (guest_data[i][j]).match(/<input.*value="(.*)">/)
+                        if (matches !== null) {
+                            for (let k = 1; k < matches.length; k++) {
+                                guest_data_array[i].push(matches[k])
+                            }
+                        }
+                        // if there is an option that is selected, push the value to the guest_data_array
+                        let matches2 = (guest_data[i][j]).match(/<option.*value="(.*)".*selected>/)
+                        console.log('guest_data[i][j]', guest_data[i][j])
+                        console.log('matches2', matches2)
+                        if (matches2 !== null) {
+                            for (let k = 1; k < matches2.length; k++) {
+                                guest_data_array[i].push(matches2[k])
+                            }
+                        }
+
                     }
                 }
+
+                console.log(guest_data_array[1])
+
+                {% comment %} 
+
+                for (let i = 0; i < data.length; i++) {
+                    if guest_data[i][2] == data.email {
+                        alert('Email already exists');
+                        return
+                    }
+                    if guest_data[i][3] == data.phone {
+                        alert('Phone number already exists');
+                        return
+                    }
+                } {% endcomment %}
+
+
 
                 // Send data to server
                 var resp = fetch('/newGuest/', {
