@@ -1,11 +1,27 @@
-
-<div class="event_card card" style="height: 50vh">
+{% for invitation in invitations %}
+<div class="event_card card" style="height: 40vh; width:10vw ; margin: 5px">
     <img class="card-img-top" src="{{invitation.card.url}}" style="width: 10vw"/>
-    <div class="card-body">
-        <h5 class="card-title event_card_title">{{ invitation.event.name }}</h5>
+    <div class="card-body" id="box_card_{{invitation.event.pk}}">
+        <h5 class="card-title event_card_title">{{ invitation.event.title }}</h5>
         <p class="event_card_text card-text">{{invitation.event.description }}</p>
     </div>
-    <div class="card-body">
-        <button href="/createEvent/guests/{{ invitation.event.pk }}" class="button home-botton">Edit</button>
-    </div>
+    <!-- <div class="card-body">
+        <button href="/createEvent/guests/{{ invitation.event.pk }}" class="button home-botton" id="edit-button">Edit</button>
+    </div> -->
 </div>
+<script>
+    const box_card_{{invitation.event.pk}} = document.getElementById("box_card_{{invitation.event.pk}}");
+    box_card_{{invitation.event.pk}}.addEventListener("mouseover", function() {
+        box_card_{{invitation.event.pk}}.style.backgroundColor = "lightgrey";
+        box_card_{{invitation.event.pk}}.style.cursor = "pointer";
+    });
+
+    box_card_{{invitation.event.pk}}.addEventListener("mouseout", function() {
+        box_card_{{invitation.event.pk}}.style.backgroundColor = "white";
+    });
+    
+    box_card_{{invitation.event.pk}}.addEventListener("click", function() {
+        window.location.href = "/createEvent/guests/{{ invitation.event.pk }}/";
+    });
+</script>
+{% endfor %}
