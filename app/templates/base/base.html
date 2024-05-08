@@ -96,34 +96,48 @@
               <span class="home-text23">contact@EVITE.com</span>
             </div>
             <div class="home-links-container">
-              <div class="home-container08">
-                <span class="home-text24">Categories</span>
-                <span class="home-text25">Collections</span>
-                <span class="home-text26">Desks</span>
-                <span class="home-text27">Furniture</span>
-                <span class="home-text28">Lamps</span>
-                <span class="home-text29">Plants</span>
-                <span class="home-text30">Decoration</span>
+              <div class="home-container08" target="_blank">
+                <span class="home-text24">Cards</span>
+                <span class="home-text25"><a target="_blank" href="https://www.canva.com/templates/?query=invitation-(portrait)-Weddings">Weddings</a></span>
+                <span class="home-text25"><a target="_blank" href="https://www.canva.com/templates/?query=invitation-(portrait)-Birthday">Birthdays</a></span>
+                <span class="home-text25"><a target="_blank" href="https://www.canva.com/templates/?query=invitation-(portrait)-Holiday-Parties">Holidays</a></span>
+                <span class="home-text25"><a target="_blank" href="https://www.canva.com/templates/?query=invitation-(portrait)-Draft">Drafts</a></span>
+                <span class="home-text25"><a target="_blank" href="https://www.canva.com/templates/?query=invitation-(portrait)-Engagement">Engagements</a></span>
+                <span class="home-text25"><a target="_blank" href="https://www.canva.com/templates/?query=invitation-(portrait)-Graduation-Parties">Graduations</a></span>
               </div>
-              <div class="home-container09">
+              {% comment %} <div class="home-container09">
                 <span class="home-text31">Company</span>
                 <span class="home-text32">Shop</span>
                 <span class="home-text33">Lookbook</span>
                 <span class="home-text34">Specials</span>
                 <span class="home-text35">About</span>
                 <span class="home-text36">Blog</span>
-              </div>
+              </div> {% endcomment %}
               <div class="home-container10">
-                <span class="home-text37">Resources</span>
-                <span class="home-text38">Contact us</span>
-                <span class="home-text39">Order</span>
-                <span class="home-text40">Track your order</span>
-                <span class="home-text41">Shipping &amp; Delivery</span>
+                <span class="home-text24">Accounts</span>
+                <span class="home-text25"><a href="/accounts/login/">Sign In</a></span>
+                <span class="home-text25">
+                <form action="/accounts/logout/" method="post">
+                    {% csrf_token %}
+                    <button style="padding: 0; margin: 0" class="home-text25" type="submit">Sign Out </button>
+                </form>
+                </span>
+                <span class="home-text25"><a href="/myEvents/">My Events</a></span>
               </div>
             </div>
           </footer>
         </div>
       </div>
+      <style>
+        .home-text25 a {
+            color : var(--dl-color-gray-black50);
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+
+        }
+      </style>
     {% endblock %}
     <script
       defer=""

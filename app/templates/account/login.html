@@ -66,16 +66,23 @@
   <div class="home-main">
     <div class="login-modol-container3">
     <h3 class="home-text11" style="text-align: center; width: 100%">Login</h3>
-      <form method = "post">
+      {% comment %} <form method = "post">
         {% csrf_token %}
         <table>
             {{ form.as_table }}
         </table>
             <button class="home-button button" type="submit" value="Submit"> Login </button>
-    </form>
+    </form> {% endcomment %}
+    {% load socialaccount %}
+
     <div class="home-container05">
-        <a href="/accounts/google/login/"> <button class="home-button button"> Login with Google </button> </a>
+        <form action="{% provider_login_url 'google' %}" method="post">
+            {% csrf_token %}
+        <button style="margin: auto" class="home-button button" type="submit"> Login with Google </button>
+        </form>
     </div>
+    
+    
 
 
   </div>

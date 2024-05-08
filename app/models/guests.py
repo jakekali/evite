@@ -26,13 +26,13 @@ class Guest(models.Model):
         if status == 'not_sent' or status == 'Not Sent':
             return 'grey'
         elif status == 'sent' or status == 'Sent':
-            return 'blue'
+            return '#ADD8E6'
         elif status == 'opened' or status == 'Opened':
             return 'yellow'
         elif status == 'attending' or status == 'Attending':
-            return 'green'
+            return '#5db061'
         elif status == 'not_attending' or status == 'Not Attending':
-            return 'red'
+            return '#bd5177'
         
 
     def create_new_hash():
@@ -107,6 +107,14 @@ class Guest(models.Model):
         sender = 'evite.ece464@gmail.com'
 
         send_mail(subject, message, sender, [self.email], html_message=message)
+
+
+    def rsvp(self, isAttending):
+        if isAttending:
+            self.status = 'attending'
+        else:
+            self.status = 'not_attending'
+        self.save()
 
     class Meta:
         constraints = [

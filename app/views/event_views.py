@@ -103,17 +103,14 @@ def get_animation(request, event_id):
         print(invitation.card.url)
         return render(request, 'inviteView/animation.html', {'loggedIn':  request.user.is_authenticated, 'event': event, 'invitation': invitation})
     
-def getInvitePage(request, hash):
+def getInvitePage(request, hash, isAttending=1):
     if request.htmx:
         guest = Guest.objects.get(hash=hash)
 
-        if request.htmx.trigger == 'not_attending':
-            guest.status = 'Not Attending'
-            guest.save()
-
-        if request.htmx.trigger == 'attending':
-            guest.status = 'Attending'
-            guest.save()
+        if isAttending == 1:
+            guest.rsvp(True)
+        else:
+            guest.rsvp(False)
 
         return HttpResponseClientRedirect("/invite/" + hash)
 

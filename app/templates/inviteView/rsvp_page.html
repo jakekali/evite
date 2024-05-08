@@ -27,11 +27,11 @@
                 <div class="col">
                 </div>
                 <div class="col">
-                <button id="attend" class="rsvp-button button" hx-post="/invite/{{guest.hash}}" hx-include="[name=hash]">WILL ATTEND</button>
+                <button id="attend" class="rsvp-button button" hx-post="/invite/{{guest.hash}}/1" hx-include="[name=hash]">WILL ATTEND</button>
                 </div>
                 {% comment %} <button class="rsvp-button button" htmx-post="/invite/rsvp/{{ event.pk }}/maybe/">MAYBE</button> {% endcomment %}
                 <div class="col">
-                <button id="no_attend" class="rsvp-button button" hx-post="/invite/{{guest.hash}}" hx-include="[name=hash]">WILL NOT ATTEND</button>
+                <button id="no_attend" class="rsvp-button button" hx-post="/invite/{{guest.hash}}/0" hx-include="[name=hash]">WILL NOT ATTEND</button>
                 </div>
                 <div class="col"></div>
 

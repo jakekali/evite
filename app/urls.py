@@ -22,7 +22,9 @@ urlpatterns = [
     
 
     path('invite/event_id/<int:event_id>/', event_views.get_animation, name='preview-invite'),
-    path('invite/<str:hash>', event_views.getInvitePage, name='invite'),
+    path('invite/<str:hash>/', event_views.getInvitePage, name='invite'),
+    path('invite/<str:hash>/<int:isAttending>', event_views.getInvitePage, name='invite'),
+
 
 
     # send invitation(s)

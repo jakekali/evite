@@ -16,7 +16,10 @@
         </div>
         <div class="home-icons">
             {% if user.is_authenticated %}
-            <a class="navbar-link" href="/accounts/logout/">LOGOUT</a>
+            <form action="/accounts/logout/" method="post">
+                {% csrf_token %}
+                <button class="navbar-link" type="submit"> LOGOUT </button>
+            </form>
             {% else %}
             <a class="navbar-link" href="/accounts/login/">SIGN IN</a>
             {% endif %}
