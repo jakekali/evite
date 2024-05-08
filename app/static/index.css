@@ -642,6 +642,94 @@
     background-color: #dfe7dd;
   }
 
+  .rsvp-container {
+    width: 100%;
+    overflow-x: hidden;
+    align-items: center;
+    flex-direction: column;
+    padding: 100px;
+
+  }
+
+  .rsvp-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    margin: 11vh;
+  }
+
+.rsvp-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 6vw;
+}
+
+.rsvp-text01 {
+    color: rgb(23, 23, 32);
+    height: auto;
+    font-size: 3rem;
+    text-align: center;
+    font-family: Jost;
+    font-weight: 400;
+    line-height: 20px;
+    text-decoration: none;
+}
+
+.rsvp-button {
+    margin-top: 2vh;
+    margin-left: auto;
+    margin-right: 3vw;
+    justify-content: flex-start;
+    width: 17vw;
+    line-height: 2.2rem;
+    font-size: 1.3rem;
+    text-align: center;
+    display: block;
+}
+
+.rsvp-text03 {
+    color: rgb(23, 23, 32);
+    height: auto;
+    font-size: 1.0rem;
+    text-align: center;
+    font-family: Jost;
+    font-weight: 400;
+    line-height: 20px;
+    text-decoration: none;
+    margin-bottom: 4rem;
+    text-transform: uppercase;
+
+
+
+}
+
+.rsvp-text04 {
+    color: rgb(23, 23, 32);
+    height: auto;
+    font-size: 1.8rem;
+    text-align: center;
+    font-family: Jost;
+    font-weight: 400;
+    line-height: 1.2rem;
+    text-decoration: none;
+
+}
+
+.rsvp-text02 {
+    color: rgb(23, 23, 32);
+    height: auto;
+    font-size: 1.4rem;
+    text-align: center;
+    font-family: Jost;
+    font-weight: 400;
+    line-height: 1.7rem;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+}
+
 @media(max-width: 1200px) {
   .home-main {
     height: 2515px;

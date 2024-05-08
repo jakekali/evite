@@ -1,0 +1,7 @@
+<div id="statusOverall" style="width: 50vw; border-width: 1px;border-style: solid; display: flex; text-align: center; margin: 25px">
+   {% for key, value in dicti.items %}
+   <div style="width: {{value.1}}%; background-color: {{ value.2 }}; color: black; padding: 10px; border-right: 1px solid white; border-left: 1px solid white;">
+      <p>{{key}}</p>
+    </div>
+    {% endfor %}
+</div>

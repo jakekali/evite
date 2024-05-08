@@ -1,0 +1,105 @@
+.login-modol-container {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .login-modol-container1 {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .login-modol-container2 {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: flex-start;
+  }
+  .login-modol-container3 {
+    flex: 0 0 auto;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .login-modol-container4 {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: flex-start;
+  }
+  .login-modol-container5 {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-modol-icon {
+    width: 24px;
+    height: 24px;
+  }
+  @media(max-width: 1200px) {
+    .login-modol-container1 {
+      width: 616px;
+      height: 100%;
+      position: relative;
+      border-color: #ffffff;
+      border-style: solid;
+      border-width: 3px;
+      background-color: var(--dl-color-pallet-green);
+    }
+    .login-modol-container2 {
+      height: 20%;
+    }
+    .login-modol-container3 {
+      top: 3px;
+      left: 0px;
+      right: 0px;
+      width: 100%;
+      height: 20%;
+      margin: auto;
+      position: absolute;
+      align-self: flex-end;
+      align-items: center;
+      border-color: var(--dl-color-gray-black50);
+      border-width: 1px;
+      border-top-width: 0px;
+      border-left-width: 0px;
+      border-right-width: 0px;
+      border-bottom-width: 3px;
+    }
+    .login-modol-container4 {
+      width: 100%;
+      height: 100%;
+      background-color: var(--dl-color-gray-white);
+    }
+    .login-modol-text {
+      width: 100%;
+      align-self: center;
+      text-align: center;
+      border-color: var(--dl-color-gray-black);
+      border-width: 0px;
+    }
+    .login-modol-container5 {
+      height: 30%;
+    }
+    .login-modol-button {
+      display: flex;
+      flex-direction: row;
+      background-color: var(--dl-color-gray-white);
+    }
+    .login-modol-text1 {
+      padding-left: var(--dl-space-space-unit);
+    }
+  }
+  

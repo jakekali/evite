@@ -26,7 +26,7 @@
             {% for image in backgrounds %}
                 <label style="width: 20vw; height: 15vw; padding: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                     <input type="radio" name="selected_image" value="{{ image.pk }}" style="display: none;">
-                    <img src="{{ image.pattern_bg }}" alt="{{ image.title_bg }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ image.file.url }}" alt="{{ image.backgroud_names }}" style="width: 100%; height: 100%; object-fit: cover;">
                 </label>
             {% endfor %}
 

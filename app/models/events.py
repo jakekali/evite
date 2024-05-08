@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import send_mass_mail, send_mail
+
 # Create your models here.
 
 class Event(models.Model):
@@ -13,3 +15,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def sendInvites(self):
+      for guest in self.guest_set.all():
+        guest.send_invitation()
